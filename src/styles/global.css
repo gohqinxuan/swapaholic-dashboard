@@ -30,4 +30,9 @@ html {
 
 body {
   height: 100%;
+  --SideNav-width: 200px !important;
+}
+
+.mui-zbi050-MuiContainer-root {
+  padding-top: 24px !important;
 }
