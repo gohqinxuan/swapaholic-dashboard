@@ -1,14 +1,12 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Grid from '@mui/material/Unstable_Grid2';
-import dayjs from 'dayjs';
 
 import { config } from '@/config';
 import { TodayRevenue } from '@/components/dashboard/overview/today-revenue';
 import { TodayOrders } from '@/components/dashboard/overview/today-orders';
 import { PastRevenue } from '@/components/dashboard/overview/past-revenue';
 import { RevenueDays } from '@/components/dashboard/overview/revenue-days';
-import { LatestOrders } from '@/components/dashboard/overview/latest-orders';
 import { MonthlyRevenue } from '@/components/dashboard/overview/monthly-revenue';
 import { YearlyRevenue } from '@/components/dashboard/overview/yearly-revenue';
 // import { Traffic } from '@/components/dashboard/overview/traffic';

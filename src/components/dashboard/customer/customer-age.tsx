@@ -4,17 +4,12 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
-import { Grid } from '@mui/material';
-import { Typography } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import { alpha, useTheme } from '@mui/material/styles';
+import { Grid, Typography } from '@mui/material';
 import type { SxProps } from '@mui/material/styles';
 import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
@@ -22,34 +17,73 @@ export interface CustomerAgeProps {
   sx?: SxProps;
 }
 
+interface AgeData {
+  ageRange: string;
+  count: number;
+}
+
 export function CustomerAge({ sx }: CustomerAgeProps): React.JSX.Element {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<AgeData[]>([]);
 
+  // useEffect(() => {
+  //   // Load and parse the CSV file
+  //   d3.csv('/datasets/customer_new.csv').then((data) => {
+  //     // Process the data to group ages
+  //     const ageGroups = d3.rollups(data, v => v.length, d => {
+  //       const age = +d.age;
+  //       if (age >= 20 && age <= 24) return '20-24';
+  //       if (age >= 25 && age <= 29) return '25-29';
+  //       if (age >= 30 && age <= 34) return '30-34';
+  //       if (age >= 35 && age <= 39) return '35-39';
+  //       if (age >= 40 && age <= 44) return '40-44';
+  //       if (age >= 45 && age <= 49) return '45-49';
+  //       return '50+';
+  //     });
+
+  //     const ageData = Array.from(ageGroups, ([key, value]) => ({ ageRange: key, count: value }));
+
+  //     // Define the order of age groups
+  //     const ageOrder = ['20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50+'];
+
+  //     // Sort the data by the defined order of age groups
+  //     ageData.sort((a, b) => ageOrder.indexOf(a.ageRange) - ageOrder.indexOf(b.ageRange));
+
+  //     setData(ageData);
+  //   });
   useEffect(() => {
-    // Load and parse the CSV file
-    d3.csv('/datasets/customer_new.csv').then((data) => {
-      // Process the data to group ages
-      const ageGroups = d3.rollups(data, v => v.length, d => {
-        const age = +d.age;
-        if (age >= 20 && age <= 24) return '20-24';
-        if (age >= 25 && age <= 29) return '25-29';
-        if (age >= 30 && age <= 34) return '30-34';
-        if (age >= 35 && age <= 39) return '35-39';
-        if (age >= 40 && age <= 44) return '40-44';
-        if (age >= 45 && age <= 49) return '45-49';
-        return '50+';
-      });
-
-      const ageData = Array.from(ageGroups, ([key, value]) => ({ ageRange: key, count: value }));
-
-      // Define the order of age groups
-      const ageOrder = ['20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50+'];
-
-      // Sort the data by the defined order of age groups
-      ageData.sort((a, b) => ageOrder.indexOf(a.ageRange) - ageOrder.indexOf(b.ageRange));
-
-      setData(ageData);
-    });
+    const fetchData = async () => {
+      try {
+        // Load and parse the CSV file
+        const csvdata = await d3.csv('/datasets/customer_new.csv'); // Await the promise
+  
+        // Process the data to group ages
+        const ageGroups = d3.rollups(csvdata, v => v.length, d => {
+          const age = +Number(d.age);
+          if (age >= 20 && age <= 24) return '20-24';
+          if (age >= 25 && age <= 29) return '25-29';
+          if (age >= 30 && age <= 34) return '30-34';
+          if (age >= 35 && age <= 39) return '35-39';
+          if (age >= 40 && age <= 44) return '40-44';
+          if (age >= 45 && age <= 49) return '45-49';
+          return '50+';
+        });
+  
+        const ageData = Array.from(ageGroups, ([key, value]) => ({ ageRange: key, count: value }));
+  
+        // Define the order of age groups
+        const ageOrder = ['20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50+'];
+  
+        // Sort the data by the defined order of age groups
+        ageData.sort((a, b) => ageOrder.indexOf(a.ageRange) - ageOrder.indexOf(b.ageRange));
+  
+        setData(ageData);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('Error loading or processing data:', error); // Handle error
+      }
+    };
+  
+    fetchData(); // Call the async function
   }, []);
 
   // Calculate total revenue for percentage calculation
@@ -70,7 +104,7 @@ export function CustomerAge({ sx }: CustomerAgeProps): React.JSX.Element {
         <DoughnutChart data={data} />
         {/* Display labels and percentages under the chart */}
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'center', mt: 2, flexWrap: 'wrap' }}>
-          {data.map((item, index) => {
+          {data.map((item) => {
             const percentage = ((item.count / totalUser) * 100).toFixed(2); // Calculate percentage
             const ageLabel = item.ageRange;
 

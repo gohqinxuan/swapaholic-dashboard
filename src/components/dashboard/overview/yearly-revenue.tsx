@@ -4,15 +4,15 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
+// import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import { Typography } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import { alpha, useTheme } from '@mui/material/styles';
+// import Divider from '@mui/material/Divider';
+// import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
 import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
+// import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
@@ -27,7 +27,7 @@ export function YearlyRevenue({ sx }: YearlyRevenueProps): React.JSX.Element {
     // Load and parse the CSV file
     d3.csv('/datasets/transactions_new.csv').then((data) => {
       // Group data by year and calculate total revenue for each year
-      const revenueByYear = d3.rollup(data, v => d3.sum(v, d => +d.total_amount), d => d.year);
+      const revenueByYear = d3.rollup(data, v => d3.sum(v, d => +Number(d.total_amount)), d => d.year);
 
       // Convert data to a suitable format for the bar chart
       const yearlyRevenueData = Array.from(revenueByYear, ([year, total]) => ({ year, total }));

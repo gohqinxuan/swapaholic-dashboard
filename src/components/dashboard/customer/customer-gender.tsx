@@ -4,17 +4,13 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
 import type { Icon } from '@phosphor-icons/react/dist/lib/types';
 import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { GenderMale as GenderMaleIcon } from '@phosphor-icons/react/dist/ssr/GenderMale';
 import { GenderFemale as GenderFemaleIcon } from '@phosphor-icons/react/dist/ssr/GenderFemale';
 import { useEffect, useState } from 'react';
@@ -60,7 +56,7 @@ export function CustomerGender({ sx }: CustomerGenderProps): React.JSX.Element {
         <DoughnutChart data={data} />
         {/* Display labels and percentages under the chart */}
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'center', mt: 2 }}>
-          {data.map((item, index) => {
+          {data.map((item) => {
             const percentage = ((item.count / totalUser) * 100).toFixed(2); // Calculate percentage
             const genderLabel = item.gender;
             const Icon = iconMapping[genderLabel];

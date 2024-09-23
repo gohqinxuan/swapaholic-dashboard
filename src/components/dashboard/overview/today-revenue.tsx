@@ -49,7 +49,7 @@ export function TodayRevenue({ sx }: TodayRevenueProps): React.JSX.Element {
       const latestTransactions = data.filter((d: any) => d.date_only === latestDate);
 
       // Calculate the total revenue for the latest date
-      const totalRevenue = d3.sum(latestTransactions, (d: any) => +d.total_amount);
+      const totalRevenue = d3.sum(latestTransactions, (d: any) => +Number(d.total_amount));
 
       // Find the second latest date (yesterday)
       const secondLatestDate = d3.max(data.filter((d: any) => d.date_only < latestDate), (d: any) => d.date_only);
@@ -58,7 +58,7 @@ export function TodayRevenue({ sx }: TodayRevenueProps): React.JSX.Element {
       const secondLatestTransactions = data.filter((d: any) => d.date_only === secondLatestDate);
 
       // Calculate the total revenue for the second latest date
-      const totalRevenueYesterday = d3.sum(secondLatestTransactions, (d: any) => +d.total_amount);
+      const totalRevenueYesterday = d3.sum(secondLatestTransactions, (d: any) => +Number(d.total_amount));
 
       // Calculate the percentage difference
       const revenueDiff = ((totalRevenue - totalRevenueYesterday) / totalRevenueYesterday) * 100;
@@ -86,7 +86,7 @@ export function TodayRevenue({ sx }: TodayRevenueProps): React.JSX.Element {
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={3}>
               <Typography color="text.secondary" variant="overline">
-                Today's Revenue
+                Today&apos;s Revenue
               </Typography>
             </Stack>
             <Avatar sx={{ backgroundColor: 'var(--mui-palette-primary-main)', height: '56px', width: '56px' }}>
