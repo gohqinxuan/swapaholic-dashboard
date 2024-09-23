@@ -4,14 +4,14 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-// import CardActions from '@mui/material/CardActions';
+import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-// import Divider from '@mui/material/Divider';
-// import { alpha, useTheme } from '@mui/material/styles';
+import Divider from '@mui/material/Divider';
+import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
 import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-// import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
+import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
@@ -39,7 +39,7 @@ export function MonthlyRevenue({ sx }: MonthlyRevenueProps): React.JSX.Element {
         .filter((d: any) => d.year === latestYear)
         .map((d: any) => ({
           ...d,
-          total_amount: +Number(d.total_amount), // Ensure total_amount is a number
+          total_amount: +d.total_amount, // Ensure total_amount is a number
           month: +d.month, // Ensure month is a number
         }));
 

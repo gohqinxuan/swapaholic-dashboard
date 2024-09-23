@@ -73,7 +73,7 @@ export function TodayOrders({ sx }: TodayOrdersProps): React.JSX.Element {
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={3}>
               <Typography color="text.secondary" variant="overline">
-                Today&apos;s Orders
+                Today's Orders
               </Typography>
             </Stack>
             <Avatar sx={{ backgroundColor: 'var(--mui-palette-success-main)', height: '56px', width: '56px' }}>

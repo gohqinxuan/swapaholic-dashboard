@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "author": "Devias",
   "licence": "MIT",
-  "homepage": "https://gohqinxuan.github.io/swapaholic-dashboard",
+  "homepage": "https://devias.io",
   "private": false,
   "scripts": {
     "dev": "next dev",

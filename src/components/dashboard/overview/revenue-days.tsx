@@ -4,17 +4,17 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-// import CardActions from '@mui/material/CardActions';
+import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import { Grid } from '@mui/material';
 import { Typography } from '@mui/material';
-// import Divider from '@mui/material/Divider';
-// import { alpha, useTheme } from '@mui/material/styles';
+import Divider from '@mui/material/Divider';
+import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
 import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-// import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
+import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
@@ -41,11 +41,11 @@ export function RevenueDays({ sx }: RevenueDaysProps): React.JSX.Element {
         .filter((d: any) => d.year === latestYear)
         .map((d: any) => ({
           ...d,
-          total_amount: +Number(d.total_amount), // Ensure total_amount is a number
+          total_amount: +d.total_amount, // Ensure total_amount is a number
         }));
 
       // Group data by day and calculate total revenue for each day
-      const revenueByDay = d3.rollup(filteredData, v => d3.sum(v, d => +Number(d.total_amount)), d => d.day);
+      const revenueByDay = d3.rollup(filteredData, v => d3.sum(v, d => +d.total_amount), d => d.day);
 
       // Convert data to a suitable format for the bar chart
       const dayRevenueData = Array.from(revenueByDay, ([day, total]) => ({ day, total }));
@@ -78,7 +78,7 @@ export function RevenueDays({ sx }: RevenueDaysProps): React.JSX.Element {
         <DoughnutChart data={data} />
         {/* Display labels and percentages under the chart */}
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'center', mt: 2, flexWrap: 'wrap' }}>
-          {data.map((item) => {
+          {data.map((item, index) => {
             const percentage = ((item.total / totalRevenue) * 100).toFixed(2); // Calculate percentage
             const dayLabel = item.day;
 
