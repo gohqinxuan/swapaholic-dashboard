@@ -4,13 +4,13 @@ import Grid from '@mui/material/Unstable_Grid2';
 import dayjs from 'dayjs';
 
 import { config } from '@/config';
-import { TodayRevenue } from '@/components/dashboard/overview/today-revenue';
+import { TodaySales } from '@/components/dashboard/overview/today-sales';
 import { TodayOrders } from '@/components/dashboard/overview/today-orders';
-import { PastRevenue } from '@/components/dashboard/overview/past-revenue';
-import { RevenueDays } from '@/components/dashboard/overview/revenue-days';
+import { PastSales } from '@/components/dashboard/overview/past-sales';
+import { SalesDays } from '@/components/dashboard/overview/sales-days';
 import { LatestOrders } from '@/components/dashboard/overview/latest-orders';
-import { MonthlyRevenue } from '@/components/dashboard/overview/monthly-revenue';
-import { YearlyRevenue } from '@/components/dashboard/overview/yearly-revenue';
+import { MonthlySales } from '@/components/dashboard/overview/monthly-sales';
+import { YearlySales } from '@/components/dashboard/overview/yearly-sales';
 // import { Traffic } from '@/components/dashboard/overview/traffic';
 
 export const metadata = { title: `Overview | Dashboard | ${config.site.name}` } satisfies Metadata;
@@ -19,13 +19,13 @@ export default function Page(): React.JSX.Element {
   return (
     <Grid container spacing={3}>
       <Grid lg={3} sm={6} xs={12}>
-        <TodayRevenue sx={{ height: '100%' }}/>
+        <TodaySales sx={{ height: '100%' }}/>
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
         <TodayOrders sx={{ height: '100%' }}/>
       </Grid>
       <Grid lg={6} md={12} xs={12}>
-        <PastRevenue sx={{ height: '100%' }}/>
+        <PastSales sx={{ height: '100%' }}/>
       </Grid>
       {/* <Grid lg={6} md={12} xs={12}>
         <LatestOrders
@@ -56,13 +56,13 @@ export default function Page(): React.JSX.Element {
         />
       </Grid> */}
       <Grid lg={8} xs={12}>
-        <MonthlyRevenue sx={{ height: '100%' }}/>
+        <MonthlySales sx={{ height: '100%' }}/>
       </Grid>
       <Grid lg={4} sm={6} xs={12}>
-        <RevenueDays sx={{ height: '100%' }}/>
+        <SalesDays sx={{ height: '100%' }}/>
       </Grid>
       <Grid lg={12} xs={12}>
-        <YearlyRevenue sx={{ height: '100%' }}/>
+        <YearlySales sx={{ height: '100%' }}/>
       </Grid>
     </Grid>
   );

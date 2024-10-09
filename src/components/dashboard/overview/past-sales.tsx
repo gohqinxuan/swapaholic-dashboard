@@ -16,11 +16,11 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
-export interface PastRevenueProps {
+export interface PastSalesProps {
   sx?: SxProps;
 }
 
-export function PastRevenue({ sx }: PastRevenueProps): React.JSX.Element {
+export function PastSales({ sx }: PastSalesProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -46,12 +46,12 @@ export function PastRevenue({ sx }: PastRevenueProps): React.JSX.Element {
       const sevenDaysAgo = d3.timeDay.offset(latestDate, -7);
       const past7DaysData = data.filter((d: any) => d.date_only >= sevenDaysAgo);
 
-      // Aggregate revenue by date
+      // Aggregate sales by date
       const aggregatedData = d3.rollups(
         past7DaysData,
         (v) => d3.sum(v, (d: any) => +d.total_amount),
         (d: any) => d.date_only
-      ).map(([date, revenue]) => ({ date, revenue }));
+      ).map(([date, sales]) => ({ date, sales }));
 
       setData(aggregatedData);
     });
@@ -65,7 +65,7 @@ export function PastRevenue({ sx }: PastRevenueProps): React.JSX.Element {
             Sync
           </Button>
         }
-        title="Past 7 Days Revenue"
+        title="Past 7 Days' Sales"
       />
       <CardContent>
         {/* Pass data to D3 chart */}
@@ -76,7 +76,7 @@ export function PastRevenue({ sx }: PastRevenueProps): React.JSX.Element {
 }
 
 // D3.js LineChart Component
-function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
+function LineChart({ data }: { data: { date: Date; sales: number }[] }) {
   useEffect(() => {
 
     // Append tooltip
@@ -128,7 +128,7 @@ function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
     // Set up y scale
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.revenue) as number])
+      .domain([0, d3.max(data, (d) => d.sales) as number])
       .nice()
       .range([height, 0]);
 
@@ -144,9 +144,9 @@ function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
 
     // Create line generator
     const line = d3
-      .line<{ date: Date; revenue: number }>()
+      .line<{ date: Date; sales: number }>()
       .x((d) => x(d.date))
-      .y((d) => y(d.revenue))
+      .y((d) => y(d.sales))
 
     // Add the line path
     svg.append('path')
@@ -163,7 +163,7 @@ function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
       .append('circle')
       .attr('class', 'dot')
       .attr('cx', (d) => x(d.date))
-      .attr('cy', (d) => y(d.revenue))
+      .attr('cy', (d) => y(d.sales))
       .attr('r', 8)
       .attr('fill', '#69b3a2')
       .on('mouseover', function (event, d) {
@@ -171,7 +171,7 @@ function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
 
         d3.select('#past-tooltip')
           .style('opacity', 0.9)
-          .html(`$${d3.format('.2s')(d.revenue)}`)
+          .html(`$${d3.format('.2s')(d.sales)}`)
           .style('left', `${event.pageX + 10}px`)
           .style('top', `${event.pageY - 28}px`);
       })

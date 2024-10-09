@@ -16,26 +16,26 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
-export interface YearlyRevenueProps {
+export interface YearlySalesProps {
   sx?: SxProps;
 }
 
-export function YearlyRevenue({ sx }: YearlyRevenueProps): React.JSX.Element {
+export function YearlySales({ sx }: YearlySalesProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
     // Load and parse the CSV file
     d3.csv('/datasets/transactions_new.csv').then((data) => {
-      // Group data by year and calculate total revenue for each year
-      const revenueByYear = d3.rollup(data, v => d3.sum(v, d => +d.total_amount), d => d.year);
+      // Group data by year and calculate total sales for each year
+      const salesByYear = d3.rollup(data, v => d3.sum(v, d => +d.total_amount), d => d.year);
 
       // Convert data to a suitable format for the bar chart
-      const yearlyRevenueData = Array.from(revenueByYear, ([year, total]) => ({ year, total }));
+      const yearlySalesData = Array.from(salesByYear, ([year, total]) => ({ year, total }));
 
       // Sort the data by year in ascending order
-      yearlyRevenueData.sort((a, b) => d3.ascending(a.year, b.year));
+      yearlySalesData.sort((a, b) => d3.ascending(a.year, b.year));
 
-      setData(yearlyRevenueData);
+      setData(yearlySalesData);
     });
   }, []);
 
@@ -47,7 +47,7 @@ export function YearlyRevenue({ sx }: YearlyRevenueProps): React.JSX.Element {
             Sync
           </Button>
         }
-        title="Yearly Revenue"
+        title="Yearly Sales"
       />
       <CardContent>
         {/* Pass data to D3 chart */}

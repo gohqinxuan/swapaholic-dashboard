@@ -51,7 +51,7 @@ export function TodayOrders({ sx }: TodayOrdersProps): React.JSX.Element {
       // Calculate the percentage difference
       const ordersDiff = ((totalOrders - totalOrdersYesterday) / totalOrdersYesterday) * 100;
 
-      // Set the trend direction and revenue difference
+      // Set the trend direction and sales difference
       setTrend(totalOrders >= totalOrdersYesterday ? 'up' : 'down');
       setDiff(Math.abs(ordersDiff));
 

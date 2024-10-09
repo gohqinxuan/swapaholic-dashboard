@@ -15,11 +15,11 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
-export interface MonthlyRevenueProps {
+export interface MonthlySalesProps {
   sx?: SxProps;
 }
 
-export function MonthlyRevenue({ sx }: MonthlyRevenueProps): React.JSX.Element {
+export function MonthlySales({ sx }: MonthlySalesProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -44,15 +44,15 @@ export function MonthlyRevenue({ sx }: MonthlyRevenueProps): React.JSX.Element {
         }));
 
       // Group the data by month and sum the total_amount
-      const monthlyRevenue = d3.rollup(
+      const monthlySales = d3.rollup(
         filteredData,
         (v: any) => d3.sum(v, (d: any) => d.total_amount),
         (d: any) => d.month
       );
 
-      const dataForChart = Array.from(monthlyRevenue, ([month, revenue]) => ({
+      const dataForChart = Array.from(monthlySales, ([month, sales]) => ({
         month,
-        revenue,
+        sales,
       }));
 
       setData(dataForChart);
@@ -67,7 +67,7 @@ export function MonthlyRevenue({ sx }: MonthlyRevenueProps): React.JSX.Element {
             Sync
           </Button>
         }
-        title="Monthly Revenue"
+        title="Monthly Sales"
       />
       <CardContent>
         {/* Pass data to D3 chart */}
@@ -78,7 +78,7 @@ export function MonthlyRevenue({ sx }: MonthlyRevenueProps): React.JSX.Element {
 }
 
 // D3.js BarChart Component
-function BarChart({ data }: { data: { month: number; revenue: number }[] }) {
+function BarChart({ data }: { data: { month: number; sales: number }[] }) {
   useEffect(() => {
 
     // Append tooltip
@@ -138,7 +138,7 @@ function BarChart({ data }: { data: { month: number; revenue: number }[] }) {
     // Set up y scale
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.revenue) as number])
+      .domain([0, d3.max(data, (d) => d.sales) as number])
       .nice()
       .range([height, 0]);
 
@@ -163,9 +163,9 @@ function BarChart({ data }: { data: { month: number; revenue: number }[] }) {
       .append('rect')
       .attr('class', 'bar')
       .attr('x', (d) => String(x(String(d.month))))
-      .attr('y', (d) => y(d.revenue))
+      .attr('y', (d) => y(d.sales))
       .attr('width', x.bandwidth())
-      .attr('height', (d) => height - y(d.revenue))
+      .attr('height', (d) => height - y(d.sales))
       .attr('fill', '#69b3a2')
       .on('mouseover', function (event, d) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -174,7 +174,7 @@ function BarChart({ data }: { data: { month: number; revenue: number }[] }) {
 
         d3.select('#monthly-tooltip')
           .style('opacity', 0.9)
-          .html(`${months[d.month - 1]}<br>$${d3.format('.2s')(d.revenue)}`)
+          .html(`${months[d.month - 1]}<br>$${d3.format('.2s')(d.sales)}`)
           .style('left', `${event.pageX + 10}px`)
           .style('top', `${event.pageY - 28}px`);
       })

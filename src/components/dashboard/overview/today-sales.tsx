@@ -13,15 +13,15 @@ import { ArrowDown as ArrowDownIcon } from '@phosphor-icons/react/dist/ssr/Arrow
 import { ArrowUp as ArrowUpIcon } from '@phosphor-icons/react/dist/ssr/ArrowUp';
 import { CurrencyDollar as CurrencyDollarIcon } from '@phosphor-icons/react/dist/ssr/CurrencyDollar';
 
-export interface TodayRevenueProps {
+export interface TodaySalesProps {
   sx?: SxProps;
 }
 
-export function TodayRevenue({ sx }: TodayRevenueProps): React.JSX.Element {
+export function TodaySales({ sx }: TodaySalesProps): React.JSX.Element {
   // const TrendIcon = trend === 'up' ? ArrowUpIcon : ArrowDownIcon;
   // const trendColor = trend === 'up' ? 'var(--mui-palette-success-main)' : 'var(--mui-palette-error-main)';
 
-  const [revenue, setRevenue] = useState('0');
+  const [sales, setSales] = useState('0');
   const [diff, setDiff] = useState<number | null>(null);
   const [trend, setTrend] = useState<'up' | 'down'>('up');
 
@@ -48,8 +48,8 @@ export function TodayRevenue({ sx }: TodayRevenueProps): React.JSX.Element {
       // Filter transactions by the latest date string
       const latestTransactions = data.filter((d: any) => d.date_only === latestDate);
 
-      // Calculate the total revenue for the latest date
-      const totalRevenue = d3.sum(latestTransactions, (d: any) => +d.total_amount);
+      // Calculate the total sales for the latest date
+      const totalSales = d3.sum(latestTransactions, (d: any) => +d.total_amount);
 
       // Find the second latest date (yesterday)
       const secondLatestDate = d3.max(data.filter((d: any) => d.date_only < latestDate), (d: any) => d.date_only);
@@ -57,18 +57,18 @@ export function TodayRevenue({ sx }: TodayRevenueProps): React.JSX.Element {
       // Filter transactions by the second latest date string
       const secondLatestTransactions = data.filter((d: any) => d.date_only === secondLatestDate);
 
-      // Calculate the total revenue for the second latest date
-      const totalRevenueYesterday = d3.sum(secondLatestTransactions, (d: any) => +d.total_amount);
+      // Calculate the total sales for the second latest date
+      const totalSalesYesterday = d3.sum(secondLatestTransactions, (d: any) => +d.total_amount);
 
       // Calculate the percentage difference
-      const revenueDiff = ((totalRevenue - totalRevenueYesterday) / totalRevenueYesterday) * 100;
+      const salesDiff = ((totalSales - totalSalesYesterday) / totalSalesYesterday) * 100;
 
-      // Set the trend direction and revenue difference
-      setTrend(totalRevenue >= totalRevenueYesterday ? 'up' : 'down');
-      setDiff(Math.abs(revenueDiff));
+      // Set the trend direction and sales difference
+      setTrend(totalSales >= totalSalesYesterday ? 'up' : 'down');
+      setDiff(Math.abs(salesDiff));
 
-      // Update the state with today's revenue
-      setRevenue(formatToThousands(totalRevenue));
+      // Update the state with today's sales
+      setSales(formatToThousands(totalSales));
     });
   }, []);
 
@@ -77,7 +77,7 @@ export function TodayRevenue({ sx }: TodayRevenueProps): React.JSX.Element {
   const trendColor = trend === 'up' ? 'var(--mui-palette-success-main)' : 'var(--mui-palette-error-main)';
 
   // return (
-  //   <TodayRevenue value={`$${revenue}`} trend="up" diff={10} />
+  //   <TodaySales value={`$${sales}`} trend="up" diff={10} />
   // );
   return (
     <Card sx={sx}>
@@ -86,14 +86,14 @@ export function TodayRevenue({ sx }: TodayRevenueProps): React.JSX.Element {
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={3}>
               <Typography color="text.secondary" variant="overline">
-                Today's Revenue
+                Today's Sales
               </Typography>
             </Stack>
             <Avatar sx={{ backgroundColor: 'var(--mui-palette-primary-main)', height: '56px', width: '56px' }}>
               <CurrencyDollarIcon fontSize="var(--icon-fontSize-lg)" />
             </Avatar>
           </Stack>
-          <Typography variant="h2">${revenue}</Typography>
+          <Typography variant="h2">${sales}</Typography>
 
           {diff ? (
             <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>

@@ -42,7 +42,7 @@ export function CustomerGender({ sx }: CustomerGenderProps): React.JSX.Element {
     });
   }, []);
 
-  // Calculate total revenue for percentage calculation
+  // Calculate total sales for percentage calculation
   const totalUser = data.reduce((sum, d) => sum + d.count, 0);
 
   return (

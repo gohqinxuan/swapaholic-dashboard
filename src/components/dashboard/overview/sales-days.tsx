@@ -18,11 +18,11 @@ import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/Arr
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
-export interface RevenueDaysProps {
+export interface SalesDaysProps {
   sx?: SxProps;
 }
 
-export function RevenueDays({ sx }: RevenueDaysProps): React.JSX.Element {
+export function SalesDays({ sx }: SalesDaysProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -44,24 +44,24 @@ export function RevenueDays({ sx }: RevenueDaysProps): React.JSX.Element {
           total_amount: +d.total_amount, // Ensure total_amount is a number
         }));
 
-      // Group data by day and calculate total revenue for each day
-      const revenueByDay = d3.rollup(filteredData, v => d3.sum(v, d => +d.total_amount), d => d.day);
+      // Group data by day and calculate total sales for each day
+      const salesByDay = d3.rollup(filteredData, v => d3.sum(v, d => +d.total_amount), d => d.day);
 
       // Convert data to a suitable format for the bar chart
-      const dayRevenueData = Array.from(revenueByDay, ([day, total]) => ({ day, total }));
+      const daySalesData = Array.from(salesByDay, ([day, total]) => ({ day, total }));
 
       // Define the order of days
       const daysOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
       // Sort the data by the defined order of days
-      dayRevenueData.sort((a, b) => daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day));
+      daySalesData.sort((a, b) => daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day));
 
-      setData(dayRevenueData);
+      setData(daySalesData);
     });
   }, []);
 
-  // Calculate total revenue for percentage calculation
-  const totalRevenue = data.reduce((sum, d) => sum + d.total, 0);
+  // Calculate total sales for percentage calculation
+  const totalSales = data.reduce((sum, d) => sum + d.total, 0);
 
   return (
     <Card sx={sx}>
@@ -71,7 +71,7 @@ export function RevenueDays({ sx }: RevenueDaysProps): React.JSX.Element {
             Sync
           </Button>
         }
-        title="Revenue by Days"
+        title="Sales by Days"
       />
       <CardContent>
         {/* Pass data to D3 chart */}
@@ -79,7 +79,7 @@ export function RevenueDays({ sx }: RevenueDaysProps): React.JSX.Element {
         {/* Display labels and percentages under the chart */}
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'center', mt: 2, flexWrap: 'wrap' }}>
           {data.map((item, index) => {
-            const percentage = ((item.total / totalRevenue) * 100).toFixed(2); // Calculate percentage
+            const percentage = ((item.total / totalSales) * 100).toFixed(2); // Calculate percentage
             const dayLabel = item.day;
 
             return (
