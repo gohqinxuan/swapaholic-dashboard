@@ -69,8 +69,7 @@ export function PastRevenue({ sx }: PastRevenueProps): React.JSX.Element {
       />
       <CardContent>
         {/* Pass data to D3 chart */}
-        {/* <LineChart data={data} /> */}
-        <Typography>In-Progress</Typography>
+        <LineChart data={data} />
       </CardContent>
     </Card>
   );
@@ -133,9 +132,9 @@ function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
       .nice()
       .range([height, 0]);
 
-    // Add x axis
+    // Add x axis with dd-mm format
     svg.append('g').attr('transform', `translate(0,${height})`).call(
-      d3.axisBottom(x).ticks(7)
+      d3.axisBottom(x).ticks(7).tickFormat((domainValue: Date | d3.NumberValue) => d3.timeFormat('%d-%m')(domainValue as Date))
     );
 
     // Add y axis
@@ -157,42 +156,67 @@ function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
       .attr('stroke-width', 2)
       .attr('d', line);
 
-    // Tooltip and point for hovering
-    const focus = svg.append('g').style('display', 'none');
-
-    // Add a circle (point) on hover
-    focus.append('circle')
+    // Add dots on the line
+    svg.selectAll('.dot')
+      .data(data)
+      .enter()
+      .append('circle')
+      .attr('class', 'dot')
+      .attr('cx', (d) => x(d.date))
+      .attr('cy', (d) => y(d.revenue))
       .attr('r', 5)
-      .attr('fill', 'blue');
+      .attr('fill', '#69b3a2')
+      .on('mouseover', function (event, d) {
+        d3.select(this).style('opacity', 0.7);
 
-    // Add mouseover event
-    svg.append('rect')
-      .attr('width', width)
-      .attr('height', height)
-      .style('fill', 'none')
-      .style('pointer-events', 'all')
-      .on('mouseover', function () {
-        focus.style('display', null);
-        d3.select('#past-tooltip').style('opacity', 0.9);
-      })
-      .on('mouseout', function () {
-        focus.style('display', 'none');
-        d3.select('#past-tooltip').style('opacity', 0);
-      })
-      .on('mousemove', function (event) {
-        const bisectDate = d3.bisector((d: { date: Date }) => d.date).left;
-        const x0 = x.invert(d3.pointer(event)[0]);
-        const i = bisectDate(data, x0, 1);
-        const d0 = data[i - 1];
-        const d1 = data[i]|| d0;
-        const d = (x0.valueOf() - d0.date.valueOf()) > (d1.date.valueOf() - x0.valueOf()) ? d1 : d0;
-        focus.attr('transform', `translate(${x(d.date)},${y(d.revenue)})`);
         d3.select('#past-tooltip')
+          .style('opacity', 0.9)
           .html(`$${d3.format('.2s')(d.revenue)}`)
           .style('left', `${event.pageX + 10}px`)
-          .style('top', `${event.pageY - 28}px`)
-          .style('opacity', 1);
+          .style('top', `${event.pageY - 28}px`);
+      })
+      .on('mouseout', function () {
+        d3.select(this).style('opacity', 1);
+
+        d3.select('#past-tooltip').style('opacity', 0);
       });
+
+    // Tooltip and point for hovering
+    // const focus = svg.append('g').style('display', 'none');
+
+    // // Add a circle (point) on hover
+    // focus.append('circle')
+    //   .attr('r', 5)
+    //   .attr('fill', 'blue');
+
+    // Add mouseover event
+    // svg.append('rect')
+    //   .attr('width', width)
+    //   .attr('height', height)
+    //   .style('fill', 'none')
+    //   .style('pointer-events', 'all')
+    //   .on('mouseover', function () {
+    //     focus.style('display', null);
+    //     d3.select('#past-tooltip').style('opacity', 0.9);
+    //   })
+    //   .on('mouseout', function () {
+    //     focus.style('display', 'none');
+    //     d3.select('#past-tooltip').style('opacity', 0);
+    //   })
+      // .on('mousemove', function (event) {
+      //   const bisectDate = d3.bisector((d: { date: Date }) => d.date).left;
+      //   const x0 = x.invert(d3.pointer(event)[0]);
+      //   const i = bisectDate(data, x0, 1);
+      //   const d0 = data[i - 1];
+      //   const d1 = data[i]|| d0;
+      //   const d = (x0.valueOf() - d0.date.valueOf()) > (d1.date.valueOf() - x0.valueOf()) ? d1 : d0;
+      //   focus.attr('transform', `translate(${x(d.date)},${y(d.revenue)})`);
+      //   d3.select('#past-tooltip')
+      //     .html(`$${d3.format('.2s')(d.revenue)}`)
+      //     .style('left', `${event.pageX + 10}px`)
+      //     .style('top', `${event.pageY - 28}px`)
+      //     .style('opacity', 1);
+      // });    
 
   }, [data]);
 

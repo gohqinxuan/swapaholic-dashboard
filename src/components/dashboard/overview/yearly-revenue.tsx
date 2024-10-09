@@ -51,8 +51,7 @@ export function YearlyRevenue({ sx }: YearlyRevenueProps): React.JSX.Element {
       />
       <CardContent>
         {/* Pass data to D3 chart */}
-        {/* <BarChart data={data} /> */}
-        <Typography>In-Progress</Typography>
+        <BarChart data={data} />
       </CardContent>
     </Card>
   );
