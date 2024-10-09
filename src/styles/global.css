@@ -31,6 +31,7 @@ html {
 body {
   height: 100%;
   --SideNav-width: 200px !important;
+  --MobileNav-width: 200px !important;
 }
 
 .mui-zbi050-MuiContainer-root {

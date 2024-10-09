@@ -135,12 +135,12 @@ function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
     // Add x axis with dd-mm format
     svg.append('g').attr('transform', `translate(0,${height})`).call(
       d3.axisBottom(x).ticks(7).tickFormat((domainValue: Date | d3.NumberValue) => d3.timeFormat('%d-%m')(domainValue as Date))
-    );
+    ).style('font-size', '12px');
 
     // Add y axis
     svg.append('g').call(
       d3.axisLeft(y).tickFormat((d) => `$${d3.format('.2s')(d)}`)
-    );
+    ).style('font-size', '12px');
 
     // Create line generator
     const line = d3
@@ -153,7 +153,7 @@ function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
       .datum(data)
       .attr('fill', 'none')
       .attr('stroke', '#69b3a2')
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 3)
       .attr('d', line);
 
     // Add dots on the line
@@ -164,7 +164,7 @@ function LineChart({ data }: { data: { date: Date; revenue: number }[] }) {
       .attr('class', 'dot')
       .attr('cx', (d) => x(d.date))
       .attr('cy', (d) => y(d.revenue))
-      .attr('r', 5)
+      .attr('r', 8)
       .attr('fill', '#69b3a2')
       .on('mouseover', function (event, d) {
         d3.select(this).style('opacity', 0.7);
