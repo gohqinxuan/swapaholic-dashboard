@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { config } from '@/config';
 import { CustomerAge } from '@/components/dashboard/customer/customer-age';
 import { CustomerGender } from '@/components/dashboard/customer/customer-gender';
+import { CustomerLocation } from '@/components/dashboard/customer/customer-location';
 import { Traffic } from '@/components/dashboard/customer/traffic';
 // import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
 // import { CustomersTable } from '@/components/dashboard/customer/customers-table';
@@ -141,21 +142,11 @@ export default function Page(): React.JSX.Element {
         <Grid lg={4} sm={6} xs={12}>
           <CustomerAge sx={{ height: '100%' }} />
         </Grid>
+        <Grid lg={12} sm={6} xs={12}>
+          <CustomerLocation sx={{ height: '100%' }} />
+        </Grid>
         {/* <Grid lg={4} md={6} xs={12}>
           <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
-        </Grid> */}
-        
-        {/* <Grid lg={3} sm={6} xs={12}>
-          <TodayOrders sx={{ height: '100%' }} />
-        </Grid>
-        <Grid lg={8} xs={12}>
-          <MonthlyRevenue sx={{ height: '100%' }} />
-        </Grid>
-        <Grid lg={4} sm={6} xs={12}>
-          <RevenueDays sx={{ height: '100%' }} />
-        </Grid>
-        <Grid lg={12} xs={12}>
-          <YearlyRevenue sx={{ height: '100%' }} />
         </Grid> */}
       </Grid>
 

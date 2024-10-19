@@ -148,12 +148,12 @@ function BarChart({ data }: { data: { month: number; sales: number }[] }) {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return months[+d - 1];
       })
-    );
+    ).style('font-size', '15px');
 
     // Add y axis
     svg.append('g').call(
       d3.axisLeft(y).tickFormat((d) => `$${d3.format('.2s')(d)}`)
-    );
+    ).style('font-size', '15px');
 
     // Add bars
     svg

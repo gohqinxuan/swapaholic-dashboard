@@ -135,12 +135,12 @@ function LineChart({ data }: { data: { date: Date; sales: number }[] }) {
     // Add x axis with dd-mm format
     svg.append('g').attr('transform', `translate(0,${height})`).call(
       d3.axisBottom(x).ticks(7).tickFormat((domainValue: Date | d3.NumberValue) => d3.timeFormat('%d-%m')(domainValue as Date))
-    ).style('font-size', '12px');
+    ).style('font-size', '15px');
 
     // Add y axis
     svg.append('g').call(
       d3.axisLeft(y).tickFormat((d) => `$${d3.format('.2s')(d)}`)
-    ).style('font-size', '12px');
+    ).style('font-size', '15px');
 
     // Create line generator
     const line = d3
