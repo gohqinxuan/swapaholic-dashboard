@@ -63,16 +63,16 @@ function ClusterCatTypography({ data }: { data: { Cluster: string; MostPopular: 
             <Typography variant="h4" fontWeight="bold" color="primary">
                 {item.MostPopular}
             </Typography>
-            <Typography variant="h6" fontWeight="bold" color="text.secondary">
+            <Typography variant="h6" color="text.secondary">
                 Most Popular Category
             </Typography>
             <Typography variant="h4" fontWeight="bold" color="primary">
                 {item.LeastPopular}
             </Typography>
-            <Typography variant="h6" fontWeight="bold" color="text.secondary">
+            <Typography variant="h6" color="text.secondary">
                 Least Popular Category
             </Typography>
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" fontWeight="bold" color="text.secondary">
                 {item.Cluster}
             </Typography>
             <Divider />
