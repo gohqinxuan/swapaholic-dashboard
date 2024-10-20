@@ -14,6 +14,9 @@ import { CustomerAge } from '@/components/dashboard/customer/customer-age';
 import { CustomerGender } from '@/components/dashboard/customer/customer-gender';
 import { CustomerLocation } from '@/components/dashboard/customer/customer-location';
 import { Traffic } from '@/components/dashboard/customer/traffic';
+import { CustomerCluster } from '@/components/dashboard/customer/customer_cluster';
+import { CustomerClusterCategory } from '@/components/dashboard/customer/most_least_cat_by_cluster';
+import { CustomerClusterWeb} from '@/components/dashboard/customer/customer_web_analysis';
 // import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
 // import { CustomersTable } from '@/components/dashboard/customer/customers-table';
 // import type { Customer } from '@/components/dashboard/customer/customers-table';
@@ -142,8 +145,17 @@ export default function Page(): React.JSX.Element {
         <Grid lg={4} sm={6} xs={12}>
           <CustomerAge sx={{ height: '100%' }} />
         </Grid>
+        <Grid lg={4} sm={6} xs={12}>
+          <CustomerCluster sx={{ height: '100%' }} />
+        </Grid>
         <Grid lg={12} sm={6} xs={12}>
           <CustomerLocation sx={{ height: '100%' }} />
+        </Grid>
+        <Grid lg={6} sm={6} xs={12}>
+          <CustomerClusterCategory sx={{ height: '100%' }} />
+        </Grid>
+        <Grid lg={6} sm={6} xs={12}>
+          <CustomerClusterWeb sx={{ height: '100%' }} />
         </Grid>
         {/* <Grid lg={4} md={6} xs={12}>
           <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
