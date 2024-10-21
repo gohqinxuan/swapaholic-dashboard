@@ -2,16 +2,10 @@
 
 import * as React from 'react';
 import * as d3 from 'd3';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import Divider from '@mui/material/Divider';
-import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
-import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
@@ -24,51 +18,20 @@ export function MonthlySales({ sx }: MonthlySalesProps): React.JSX.Element {
 
   useEffect(() => {
     // Load and parse the CSV file
-    d3.csv('/datasets/transactions_new.csv').then((data) => {
+    d3.csv('/datasets/monthly_sales.csv').then((data) => {
       data.forEach((d: any) => {
         d.total_amount = +d.total_amount;
-        d.year = +d.year;
-        d.month = +d.month;
+        d.month = d.month;
+        d.type = d.type;
       });
 
-      // Find the latest year in the dataset
-      const latestYear = d3.max(data, (d: any) => d.year);
-
-      // Filter data for the latest year
-      const filteredData = data
-        .filter((d: any) => d.year === latestYear)
-        .map((d: any) => ({
-          ...d,
-          total_amount: +d.total_amount, // Ensure total_amount is a number
-          month: +d.month, // Ensure month is a number
-        }));
-
-      // Group the data by month and sum the total_amount
-      const monthlySales = d3.rollup(
-        filteredData,
-        (v: any) => d3.sum(v, (d: any) => d.total_amount),
-        (d: any) => d.month
-      );
-
-      const dataForChart = Array.from(monthlySales, ([month, sales]) => ({
-        month,
-        sales,
-      }));
-
-      setData(dataForChart);
+      setData(data);
     });
   }, []);
 
   return (
     <Card sx={sx}>
-      <CardHeader
-        action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
-          </Button>
-        }
-        title="Monthly Sales"
-      />
+      <CardHeader title="Monthly Sales" />
       <CardContent>
         {/* Pass data to D3 chart */}
         <BarChart data={data} />
@@ -78,7 +41,7 @@ export function MonthlySales({ sx }: MonthlySalesProps): React.JSX.Element {
 }
 
 // D3.js BarChart Component
-function BarChart({ data }: { data: { month: number; sales: number }[] }) {
+function BarChart({ data }: { data: { month: string; total_amount: number; type: string }[] }) {
   useEffect(() => {
 
     // Append tooltip
@@ -131,59 +94,89 @@ function BarChart({ data }: { data: { month: number; sales: number }[] }) {
     // Set up x scale
     const x = d3
       .scaleBand()
-      .domain(data.map((d) => String(d.month)).sort((a, b) => +a - +b))
+      .domain(data.map((d) => d.month))
       .range([0, width])
       .padding(0.2);
 
     // Set up y scale
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(data, (d) => d.sales) as number])
+      .domain([0, d3.max(data, (d) => d.total_amount) as number])
       .nice()
       .range([height, 0]);
 
     // Add x axis
-    svg.append('g').attr('transform', `translate(0,${height})`).call(
-      d3.axisBottom(x).tickFormat((d) => {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return months[+d - 1];
-      })
-    ).style('font-size', '15px');
+    svg.append('g')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x))
+      .selectAll('text')
+      .style('font-size', '15px');
 
     // Add y axis
-    svg.append('g').call(
-      d3.axisLeft(y).tickFormat((d) => `$${d3.format('.2s')(d)}`)
-    ).style('font-size', '15px');
+    svg.append('g')
+      .call(d3.axisLeft(y).tickFormat((d) => `$${d3.format('.2s')(d)}`))
+      .style('font-size', '15px');
 
     // Add bars
-    svg
-      .selectAll('.bar')
+    svg.selectAll('.bar')
       .data(data)
       .enter()
       .append('rect')
       .attr('class', 'bar')
-      .attr('x', (d) => String(x(String(d.month))))
-      .attr('y', (d) => y(d.sales))
+      .attr('x', (d) => x(d.month) as number)
+      .attr('y', (d) => y(d.total_amount))
       .attr('width', x.bandwidth())
-      .attr('height', (d) => height - y(d.sales))
-      .attr('fill', '#69b3a2')
+      .attr('height', (d) => height - y(d.total_amount))
+      .attr('fill', (d) => (d.type === 'forecast' ? '#d8d6ff' : 'var(--mui-palette-primary-main)'))
       .on('mouseover', function (event, d) {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         d3.select(this)
-          .style("fill", "#4e8d7c");
+          .style('opacity', 0.7);
 
         d3.select('#monthly-tooltip')
           .style('opacity', 0.9)
-          .html(`${months[d.month - 1]}<br>$${d3.format('.2s')(d.sales)}`)
+          .html(`${d.month}<br>$${d3.format('.2s')(d.total_amount)}`)
           .style('left', `${event.pageX + 10}px`)
           .style('top', `${event.pageY - 28}px`);
       })
-      .on('mouseout', function () {
-        d3.select(this)
-          .style("fill", "#69b3a2");
+      .on('mouseout', function (event, d) {
+        d3.select(this).style('opacity', 1);
 
         d3.select('#monthly-tooltip').style('opacity', 0);  // Hide tooltip
       });
+
+    interface LegendItem {
+      color: string;
+      label: string;
+    }
+    // Add legend
+    const legendData: LegendItem[] = [
+      { color: 'var(--mui-palette-primary-main)', label: 'Actual Sales' },
+      { color: '#d8d6ff', label: 'Forecast Sales' }
+    ];
+
+    const legend = svg.append('g')
+      .attr('transform', `translate(${width - 120}, -20)`); // Position legend at the top right
+
+    legend.selectAll('.legend-item')
+      .data(legendData)
+      .enter()
+      .append('g')
+      .attr('class', 'legend-item')
+      .attr('transform', (d, i) => `translate(0, ${i * 20})`); // Stack items vertically
+
+    legend.selectAll('.legend-item')
+      .append('rect')
+      .attr('width', 15)
+      .attr('height', 15)
+      .attr('fill', (d) => (d as LegendItem).color);
+
+    legend.selectAll('.legend-item')
+      .append('text')
+      .attr('x', 20)
+      .attr('y', 12)
+      .text((d) => (d as LegendItem).label)
+      .style('font-size', '14px');
+
 
   }, [data]);
 
