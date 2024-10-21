@@ -65,7 +65,7 @@ export function SalesDays({ sx }: SalesDaysProps): React.JSX.Element {
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Sales by Days"/>
+      <CardHeader title="Sales by Days" />
       <CardContent>
         {/* Pass data to D3 chart */}
         <DoughnutChart data={data} />
@@ -83,16 +83,16 @@ export function SalesDays({ sx }: SalesDaysProps): React.JSX.Element {
               //   </Typography>
               // </Stack>
               // wrap the day labels and percentages in a Grid component
-              <Grid key={dayLabel} container spacing={1} sx={{ alignItems: 'center', maxWidth: '60px', flexWrap: 'wrap'  }}>
-                <Grid item>
-                  <Typography variant="h6" noWrap>{dayLabel}</Typography>
+              <Grid key={dayLabel} container direction="column" spacing={1} sx={{ alignItems: 'center', maxWidth: '60px' }}>
+                <Grid item sx={{ paddingRight: '8px' }}>
+                  <Typography variant="h6" noWrap align="center">{dayLabel}</Typography>
                 </Grid>
-                <Grid item xs={12}>
-                  <Typography color="text.secondary" variant="subtitle2" noWrap>
+                <Grid item sx={{ paddingRight: '8px' }}>
+                  <Typography color="text.secondary" variant="subtitle2" noWrap align="center">
                     {percentage}%
                   </Typography>
                 </Grid>
-                </Grid>
+              </Grid>
             );
           })}
         </Stack>
@@ -148,7 +148,10 @@ function DoughnutChart({ data }: { data: { day: string; total: number }[] }) {
     svg.style('font-family', fontFamily);
 
     // Define the color scale
-    const color = d3.scaleOrdinal(d3.schemePurples[7]);
+    const color = d3.scaleOrdinal()
+      .domain(data.map(d => d.day))
+      .range(["#2A265F", "#3C3D99", "#5455a8", "#5752D1", "#8481DD", "#B2B0EA", "#d8d6ff"]);;
+
 
     // Create a pie layout
     const pie = d3.pie<{ day: string; total: number }>()
@@ -168,7 +171,7 @@ function DoughnutChart({ data }: { data: { day: string; total: number }[] }) {
       .append('path')
       .attr('class', 'arc')
       .attr('d', arc)
-      .attr('fill', d => color(String(d.data.day)))
+      .attr('fill', d => color(d.data.day) as string)
       .on('mouseover', function (event, d) {
         d3.select(this).style('opacity', 0.7);
 

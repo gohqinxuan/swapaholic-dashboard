@@ -8,21 +8,18 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
-import { Grid } from '@mui/material';
 import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
 import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
-export interface CustomerClusterCategoryProps {
+export interface CategoryAnalysisProps {
   sx?: SxProps;
 }
  
-export function CustomerClusterCategory({ sx }: CustomerClusterCategoryProps): React.JSX.Element {
+export function CategoryAnalysis({ sx }: CategoryAnalysisProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -38,14 +35,7 @@ export function CustomerClusterCategory({ sx }: CustomerClusterCategoryProps): R
   }, []);
   return (
     <Card sx={sx}>
-      <CardHeader
-        action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
-          </Button>
-        }
-        title="Most Popular & Least Popular Category by Customer Cluster"
-      />
+      <CardHeader title="Category Analysis by Customer Cluster"/>
       <CardContent>
         <ClusterCatTypography data={data} />
       </CardContent>

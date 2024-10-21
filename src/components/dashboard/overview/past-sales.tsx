@@ -145,7 +145,7 @@ function LineChart({ data }: { data: { date: Date; sales: number }[] }) {
     svg.append('path')
       .datum(data)
       .attr('fill', 'none')
-      .attr('stroke', '#69b3a2')
+      .attr('stroke', 'var(--mui-palette-success-main)')
       .attr('stroke-width', 3)
       .attr('d', line);
 
@@ -158,7 +158,7 @@ function LineChart({ data }: { data: { date: Date; sales: number }[] }) {
       .attr('cx', (d) => x(d.date))
       .attr('cy', (d) => y(d.sales))
       .attr('r', 8)
-      .attr('fill', '#69b3a2')
+      .attr('fill', 'var(--mui-palette-success-main)')
       .on('mouseover', function (event, d) {
         d3.select(this).style('opacity', 0.7);
 
@@ -172,45 +172,7 @@ function LineChart({ data }: { data: { date: Date; sales: number }[] }) {
         d3.select(this).style('opacity', 1);
 
         d3.select('#past-tooltip').style('opacity', 0);
-      });
-
-    // Tooltip and point for hovering
-    // const focus = svg.append('g').style('display', 'none');
-
-    // // Add a circle (point) on hover
-    // focus.append('circle')
-    //   .attr('r', 5)
-    //   .attr('fill', 'blue');
-
-    // Add mouseover event
-    // svg.append('rect')
-    //   .attr('width', width)
-    //   .attr('height', height)
-    //   .style('fill', 'none')
-    //   .style('pointer-events', 'all')
-    //   .on('mouseover', function () {
-    //     focus.style('display', null);
-    //     d3.select('#past-tooltip').style('opacity', 0.9);
-    //   })
-    //   .on('mouseout', function () {
-    //     focus.style('display', 'none');
-    //     d3.select('#past-tooltip').style('opacity', 0);
-    //   })
-      // .on('mousemove', function (event) {
-      //   const bisectDate = d3.bisector((d: { date: Date }) => d.date).left;
-      //   const x0 = x.invert(d3.pointer(event)[0]);
-      //   const i = bisectDate(data, x0, 1);
-      //   const d0 = data[i - 1];
-      //   const d1 = data[i]|| d0;
-      //   const d = (x0.valueOf() - d0.date.valueOf()) > (d1.date.valueOf() - x0.valueOf()) ? d1 : d0;
-      //   focus.attr('transform', `translate(${x(d.date)},${y(d.revenue)})`);
-      //   d3.select('#past-tooltip')
-      //     .html(`$${d3.format('.2s')(d.revenue)}`)
-      //     .style('left', `${event.pageX + 10}px`)
-      //     .style('top', `${event.pageY - 28}px`)
-      //     .style('opacity', 1);
-      // });    
-
+      });  
   }, [data]);
 
   return <svg id="past-graph"></svg>;

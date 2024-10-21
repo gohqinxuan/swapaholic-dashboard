@@ -2,13 +2,11 @@
 
 import * as React from 'react';
 import * as d3 from 'd3';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import { useEffect, useState } from 'react';
 import type { SxProps } from '@mui/material/styles';
-import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
 
 export interface CustomerLocationProps {
   sx?: SxProps;
@@ -69,7 +67,7 @@ export function CustomerLocation({ sx }: CustomerLocationProps): React.JSX.Eleme
     // Create color scale based on customer count
     const colorScale = d3.scaleThreshold<number, string>()
       .domain([9000, 10000, 15000, 20000, 25000, 30000, 35000])
-      .range(d3.schemeBlues[7]);
+      .range(d3.schemePurples[7]);
 
     // Append tooltip
     const tooltip = d3.select('#region-tooltip');
@@ -109,10 +107,10 @@ export function CustomerLocation({ sx }: CustomerLocationProps): React.JSX.Eleme
         const customerCount = regionData ? regionData.count : 0;
         return colorScale(customerCount);  // Apply color based on customer count
       })
-      .attr('stroke', '#333')
-      .attr('stroke-width', '1px')
+      // .attr('stroke', '#333')
+      // .attr('stroke-width', '1px')
       .attr('class', 'region')
-      .style('opacity', .8)
+      // .style('opacity', .8)
       .on('mouseover', function (event, d) {
         const regionName = (d as any).properties.district.trim();
         const regionData = data.find((item) => item.district === regionName);
@@ -135,11 +133,39 @@ export function CustomerLocation({ sx }: CustomerLocationProps): React.JSX.Eleme
 
         d3.select('#region-tooltip').style('opacity', 0);
       });
+
+    // Append legend
+    const legend = svg.append('g')
+      .attr('class', 'legend')
+      .attr('transform', `translate(${width + 10}, ${margin.top})`);
+
+    const legendValues = colorScale.domain();
+
+    // Add legend items
+    legend.selectAll('rect')
+      .data(legendValues)
+      .enter()
+      .append('rect')
+      .attr('x', 0)
+      .attr('y', (d, i) => i * 25)  // Spacing between legend items
+      .attr('width', 20)
+      .attr('height', 20)
+      .attr('fill', d => colorScale(d));
+
+    // Add legend labels
+    legend.selectAll('text')
+      .data(legendValues)
+      .enter()
+      .append('text')
+      .attr('x', 30)  // Position text next to the legend color box
+      .attr('y', (d, i) => i * 25 + 15)  // Align text vertically with color box
+      .text(d => `≥ ${d}`)
+      .style('font-size', '10px');
   };
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Customer Locations in Singapore"/>
+      <CardHeader title="Customer Locations in Singapore" />
       <CardContent>
         <svg id="map"></svg>
       </CardContent>

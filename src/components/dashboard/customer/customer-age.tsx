@@ -57,7 +57,7 @@ export function CustomerAge({ sx }: CustomerAgeProps): React.JSX.Element {
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Age Group"/>
+      <CardHeader title="Age Group" />
       <CardContent>
         {/* Pass data to D3 chart */}
         <DoughnutChart data={data} />
@@ -74,16 +74,16 @@ export function CustomerAge({ sx }: CustomerAgeProps): React.JSX.Element {
               //     {percentage}%
               //   </Typography>
               // </Stack>
-              <Grid key={ageLabel} container spacing={1} sx={{ alignItems: 'center', maxWidth: '60px', flexWrap: 'wrap'  }}>
-                <Grid item>
+              <Grid key={ageLabel} container direction="column" spacing={1} sx={{ alignItems: 'center', maxWidth: '60px' }}>
+                <Grid item sx={{ paddingRight: '8px' }}>
                   <Typography variant="h6" noWrap>{ageLabel}</Typography>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item sx={{ paddingRight: '8px' }}>
                   <Typography color="text.secondary" variant="subtitle2" noWrap>
                     {percentage}%
                   </Typography>
                 </Grid>
-                </Grid>
+              </Grid>
             );
           })}
         </Stack>
@@ -139,7 +139,9 @@ function DoughnutChart({ data }: { data: { ageRange: string; count: number }[] }
     svg.style('font-family', fontFamily);
 
     // Define the color scale
-    const color = d3.scaleOrdinal(d3.schemePurples[7]);
+    const color = d3.scaleOrdinal()
+      .domain(data.map(d => d.ageRange))
+      .range(["#2A265F", "#3C3D99", "#5455a8", "#5752D1", "#8481DD", "#B2B0EA", "#d8d6ff"]);;
 
     // Create a pie layout
     const pie = d3.pie<{ ageRange: string; count: number }>()
@@ -159,7 +161,7 @@ function DoughnutChart({ data }: { data: { ageRange: string; count: number }[] }
       .append('path')
       .attr('class', 'arc')
       .attr('d', arc)
-      .attr('fill', d => color(d.data.ageRange))
+      .attr('fill', d => color(d.data.ageRange) as string)
       .on('mouseover', function (event, d) {
         d3.select(this).style('opacity', 0.7);
 

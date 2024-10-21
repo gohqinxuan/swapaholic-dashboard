@@ -68,14 +68,7 @@ export function CustomerCluster({ sx }: CustomerClusterProps): React.JSX.Element
 
   return (
     <Card sx={sx}>
-      <CardHeader
-        action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
-          </Button>
-        }
-        title="Customer Cluster Demographic"
-      />
+      <CardHeader title="Customer Cluster Demographic"/>
       <CardContent>
         <ClusterTypography data={data} totalUser={totalUser} />
       </CardContent>

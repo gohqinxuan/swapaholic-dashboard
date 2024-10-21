@@ -8,21 +8,17 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
-import { Grid } from '@mui/material';
 import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
-import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
-export interface CustomerClusterWebProps {
+export interface WebAnalysisProps {
   sx?: SxProps;
 }
  
-export function CustomerClusterWeb({ sx }: CustomerClusterWebProps): React.JSX.Element {
+export function WebAnalysis({ sx }: WebAnalysisProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
@@ -38,14 +34,7 @@ export function CustomerClusterWeb({ sx }: CustomerClusterWebProps): React.JSX.E
   }, []);
   return (
     <Card sx={sx}>
-      <CardHeader
-        action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
-          </Button>
-        }
-        title="Web Analysis by Customer Cluster"
-      />
+      <CardHeader title="Web Analysis by Customer Cluster"/>
       <CardContent>
         <ClusterWebTypography data={data} />
       </CardContent>

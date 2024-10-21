@@ -4,23 +4,18 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
 import type { Icon } from '@phosphor-icons/react/dist/lib/types';
-import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { GenderMale as GenderMaleIcon } from '@phosphor-icons/react/dist/ssr/GenderMale';
 import { GenderFemale as GenderFemaleIcon } from '@phosphor-icons/react/dist/ssr/GenderFemale';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
-const iconMapping = { Male: GenderMaleIcon, Female: GenderFemaleIcon} as Record<string, Icon>;
+const iconMapping = { Male: GenderMaleIcon, Female: GenderFemaleIcon } as Record<string, Icon>;
 
 export interface CustomerGenderProps {
   sx?: SxProps;
@@ -47,7 +42,7 @@ export function CustomerGender({ sx }: CustomerGenderProps): React.JSX.Element {
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Gender"/>
+      <CardHeader title="Gender" />
       <CardContent>
         {/* Pass data to D3 chart */}
         <DoughnutChart data={data} />
@@ -121,7 +116,9 @@ function DoughnutChart({ data }: { data: { gender: string; count: number }[] }) 
     svg.style('font-family', fontFamily);
 
     // Define the color scale
-    const color = d3.scaleOrdinal(d3.schemePurples[7]);
+    const color = d3.scaleOrdinal()
+      .domain(data.map(d => d.gender))
+      .range(["#5752D1", "#8481DD"]); 
 
     // Create a pie layout
     const pie = d3.pie<{ gender: string; count: number }>()
@@ -141,7 +138,7 @@ function DoughnutChart({ data }: { data: { gender: string; count: number }[] }) 
       .append('path')
       .attr('class', 'arc')
       .attr('d', arc)
-      .attr('fill', d => color(d.data.gender))
+      .attr('fill', d => color(d.data.gender) as string)
       .on('mouseover', function (event, d) {
         d3.select(this).style('opacity', 0.7);
 
