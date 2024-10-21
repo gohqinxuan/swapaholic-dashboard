@@ -65,14 +65,7 @@ export function SalesDays({ sx }: SalesDaysProps): React.JSX.Element {
 
   return (
     <Card sx={sx}>
-      <CardHeader
-        action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
-          </Button>
-        }
-        title="Sales by Days"
-      />
+      <CardHeader title="Sales by Days"/>
       <CardContent>
         {/* Pass data to D3 chart */}
         <DoughnutChart data={data} />

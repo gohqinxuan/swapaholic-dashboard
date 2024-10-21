@@ -4,15 +4,10 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
-import { Typography } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
 import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
@@ -41,14 +36,7 @@ export function YearlySales({ sx }: YearlySalesProps): React.JSX.Element {
 
   return (
     <Card sx={sx}>
-      <CardHeader
-        action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
-          </Button>
-        }
-        title="Yearly Sales"
-      />
+      <CardHeader title="Yearly Sales"/>
       <CardContent>
         {/* Pass data to D3 chart */}
         <BarChart data={data} />
@@ -136,10 +124,10 @@ function BarChart({ data }: { data: { year: number; total: number }[] }) {
       .attr('y', d => y(d.total))
       .attr('width', x.bandwidth())
       .attr('height', (d) => height - y(d.total))
-      .attr('fill', '#69b3a2')
+      .attr('fill', 'var(--mui-palette-success-main)')
       .on('mouseover', function (event, d) {
         d3.select(this)
-          .style("fill", "#4e8d7c");
+          .style('opacity', 0.7);
 
         d3.select('#yearly-tooltip')
           .style('opacity', 0.9)
@@ -148,8 +136,7 @@ function BarChart({ data }: { data: { year: number; total: number }[] }) {
           .style('top', `${event.pageY - 28}px`);
       })
       .on('mouseout', function () {
-        d3.select(this)
-          .style("fill", "#69b3a2");
+        d3.select(this).style('opacity', 1);
 
         d3.select('#yearly-tooltip').style('opacity', 0);  // Hide tooltip
       });

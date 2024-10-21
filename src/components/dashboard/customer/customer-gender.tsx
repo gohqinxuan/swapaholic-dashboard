@@ -47,14 +47,7 @@ export function CustomerGender({ sx }: CustomerGenderProps): React.JSX.Element {
 
   return (
     <Card sx={sx}>
-      <CardHeader
-        action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
-          </Button>
-        }
-        title="Gender"
-      />
+      <CardHeader title="Gender"/>
       <CardContent>
         {/* Pass data to D3 chart */}
         <DoughnutChart data={data} />

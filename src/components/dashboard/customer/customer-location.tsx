@@ -139,14 +139,7 @@ export function CustomerLocation({ sx }: CustomerLocationProps): React.JSX.Eleme
 
   return (
     <Card sx={sx}>
-      <CardHeader
-        action={
-          <Button color="inherit" size="small" startIcon={<ArrowClockwiseIcon fontSize="var(--icon-fontSize-md)" />}>
-            Sync
-          </Button>
-        }
-        title="Customer Locations in Singapore"
-      />
+      <CardHeader title="Customer Locations in Singapore"/>
       <CardContent>
         <svg id="map"></svg>
       </CardContent>
