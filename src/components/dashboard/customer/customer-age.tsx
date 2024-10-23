@@ -10,11 +10,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
 import { Grid } from '@mui/material';
 import { Typography } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
-import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
@@ -60,40 +56,14 @@ export function CustomerAge({ sx }: CustomerAgeProps): React.JSX.Element {
       <CardHeader title="Age Group" />
       <CardContent>
         {/* Pass data to D3 chart */}
-        <DoughnutChart data={data} />
-        {/* Display labels and percentages under the chart */}
-        <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'center', mt: 2, flexWrap: 'wrap' }}>
-          {data.map((item, index) => {
-            const percentage = ((item.count / totalUser) * 100).toFixed(2); // Calculate percentage
-            const ageLabel = item.ageRange;
-
-            return (
-              // <Stack key={ageLabel} spacing={1} sx={{ alignItems: 'center' }}>
-              //   <Typography variant="h6">{ageLabel}</Typography>
-              //   <Typography color="text.secondary" variant="subtitle2">
-              //     {percentage}%
-              //   </Typography>
-              // </Stack>
-              <Grid key={ageLabel} container direction="column" spacing={1} sx={{ alignItems: 'center', maxWidth: '60px' }}>
-                <Grid item sx={{ paddingRight: '8px' }}>
-                  <Typography variant="h6" noWrap>{ageLabel}</Typography>
-                </Grid>
-                <Grid item sx={{ paddingRight: '8px' }}>
-                  <Typography color="text.secondary" variant="subtitle2" noWrap>
-                    {percentage}%
-                  </Typography>
-                </Grid>
-              </Grid>
-            );
-          })}
-        </Stack>
+        <BarChart data={data} totalUser={totalUser} />
       </CardContent>
     </Card>
   );
 }
 
-// D3.js DoughnutChart Component
-function DoughnutChart({ data }: { data: { ageRange: string; count: number }[] }) {
+// D3.js BarChart Component
+function BarChart({ data, totalUser }: { data: { ageRange: string; count: number }[], totalUser: number }) {
   useEffect(() => {
 
     // Append tooltip
@@ -119,10 +89,9 @@ function DoughnutChart({ data }: { data: { ageRange: string; count: number }[] }
     if (data.length === 0) return;
 
     // Set up chart dimensions
-    const margin = { top: 10, right: 10, bottom: 10, left: 10 };
-    const width = 350 - margin.left - margin.right;
-    const height = 350 - margin.top - margin.bottom;
-    const radius = Math.min(width, height) / 2;
+    const margin = { top: 30, right: 20, bottom: 40, left: 40 };
+    const width = 800 - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
     // Remove any previous chart content
     d3.select('#age-graph').selectAll('*').remove();
@@ -130,54 +99,74 @@ function DoughnutChart({ data }: { data: { ageRange: string; count: number }[] }
     const svg = d3
       .select('#age-graph')
       .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
-      // .attr('width', width + margin.left + margin.right)
-      // .attr('height', height + margin.top + margin.bottom)
       .append('g')
-      .attr('transform', `translate(${width / 2 + margin.left},${height / 2 + margin.top})`);
+      .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Apply font family to text elements
     svg.style('font-family', fontFamily);
 
-    // Define the color scale
-    const color = d3.scaleOrdinal()
+    // X scale (age groups)
+    const x = d3.scaleBand()
       .domain(data.map(d => d.ageRange))
-      .range(["#2A265F", "#3C3D99", "#5455a8", "#5752D1", "#8481DD", "#B2B0EA", "#d8d6ff"]);;
+      .range([0, width])
+      .padding(0.1);
 
-    // Create a pie layout
-    const pie = d3.pie<{ ageRange: string; count: number }>()
-      .value(d => d.count)
-      .sort(null);
+    // Y scale (percentage)
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(data, d => (d.count / totalUser) * 100)!])
+      .range([height, 0]);
 
-    // Create an arc generator
-    const arc = d3.arc<d3.PieArcDatum<{ ageRange: string; count: number }>>()
-      .outerRadius(radius - 10)
-      .innerRadius(radius - 70);
+    // X Axis
+    svg.append('g')
+      .attr('transform', `translate(0, ${height})`)
+      .call(d3.axisBottom(x))
+      .style('font-size', '15px');
 
-    // Create a pie chart
-    const arcData = pie(data);
-    svg.selectAll('.arc')
-      .data(arcData)
+    // // Y Axis
+    // svg.append('g')
+    //   .call(d3.axisLeft(y).ticks(5).tickFormat(d => `${d}%`));
+
+    // Bars
+    svg.selectAll('.bar')
+      .data(data)
       .enter()
-      .append('path')
-      .attr('class', 'arc')
-      .attr('d', arc)
-      .attr('fill', d => color(d.data.ageRange) as string)
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', d => x(d.ageRange)!)
+      .attr('y', d => y((d.count / totalUser) * 100))
+      .attr('width', x.bandwidth())
+      .attr('height', d => height - y((d.count / totalUser) * 100))
+      .attr('fill', 'var(--mui-palette-primary-main)')
       .on('mouseover', function (event, d) {
-        d3.select(this).style('opacity', 0.7);
+        d3.select(this)
+          .style('opacity', 0.7);
 
         d3.select('#age-tooltip')
           .style('opacity', 0.9)
-          .html(`${d.data.ageRange} years old<br>${d.data.count}`)
+          .html(`${d.ageRange}<br>${d3.format('.2s')(d.count)}`)
           .style('left', `${event.pageX + 10}px`)
           .style('top', `${event.pageY - 28}px`);
       })
-      .on('mouseout', function () {
+      .on('mouseout', function (event, d) {
         d3.select(this).style('opacity', 1);
 
-        d3.select('#age-tooltip').style('opacity', 0);
+        d3.select('#age-tooltip').style('opacity', 0);  // Hide tooltip
       });
 
-  }, [data]);
+    // Add percentage labels on top of each bar
+    svg.selectAll('.label')
+      .data(data)
+      .enter()
+      .append('text')
+      .attr('class', 'label')
+      .attr('x', d => x(d.ageRange)! + x.bandwidth() / 2)
+      .attr('y', d => y((d.count / totalUser) * 100) - 5)
+      .attr('text-anchor', 'middle')
+      .style('fill', '#000')
+      .style('font-family', fontFamily)
+      .text(d => `${((d.count / totalUser) * 100).toFixed(2)}%`);
+
+  }, [data, totalUser]);
 
   return <svg id="age-graph"></svg>;
 }

@@ -11,7 +11,6 @@ import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import type { SxProps } from '@mui/material/styles';
-import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 

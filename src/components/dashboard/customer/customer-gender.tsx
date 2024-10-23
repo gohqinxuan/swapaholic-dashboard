@@ -49,15 +49,18 @@ export function CustomerGender({ sx }: CustomerGenderProps): React.JSX.Element {
         {/* Display labels and percentages under the chart */}
         <Stack direction="row" spacing={2} sx={{ alignItems: 'center', justifyContent: 'center', mt: 2 }}>
           {data.map((item, index) => {
-            const percentage = ((item.count / totalUser) * 100).toFixed(2); // Calculate percentage
+            const percentage = ((item.count / totalUser) * 100).toFixed(1); // Calculate percentage
             const genderLabel = item.gender;
             const Icon = iconMapping[genderLabel];
+
+            // Conditional color assignment based on gender
+            const percentageColor = genderLabel === 'Female' ? "var(--mui-palette-success-main)" : "#11927f";
 
             return (
               <Stack key={genderLabel} spacing={1} sx={{ alignItems: 'center' }}>
                 {Icon ? <Icon fontSize="var(--icon-fontSize-lg)" /> : null}
                 <Typography variant="h6">{genderLabel}</Typography>
-                <Typography color="text.secondary" variant="subtitle2">
+                <Typography variant="h5" fontWeight="bold" sx={{ color: percentageColor }} >
                   {percentage}%
                 </Typography>
               </Stack>
@@ -118,7 +121,7 @@ function DoughnutChart({ data }: { data: { gender: string; count: number }[] }) 
     // Define the color scale
     const color = d3.scaleOrdinal()
       .domain(data.map(d => d.gender))
-      .range(["#5752D1", "#8481DD"]); 
+      .range(["var(--mui-palette-success-main)", "#11927f"]);
 
     // Create a pie layout
     const pie = d3.pie<{ gender: string; count: number }>()

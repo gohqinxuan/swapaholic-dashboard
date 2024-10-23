@@ -10,6 +10,7 @@ import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 import dayjs from 'dayjs';
 
 import { config } from '@/config';
+import { TotalCustomers } from '@/components/dashboard/customer/total-customers';
 import { CustomerAge } from '@/components/dashboard/customer/customer-age';
 import { CustomerGender } from '@/components/dashboard/customer/customer-gender';
 import { CustomerLocation } from '@/components/dashboard/customer/customer-location';
@@ -25,14 +26,17 @@ export default function Page(): React.JSX.Element {
   return (
 
       <Grid container spacing={3}>
+        <Grid lg={3} sm={6} xs={12}>
+          <TotalCustomers sx={{ height: '100%' }} />
+        </Grid>
+        <Grid lg={9} xs={12}>
+          <CustomerCluster sx={{ height: '100%' }} />
+        </Grid>
         <Grid lg={4} sm={6} xs={12}>
           <CustomerGender sx={{ height: '100%' }} />
         </Grid>
-        <Grid lg={4} sm={6} xs={12}>
+        <Grid lg={8} sm={6} xs={12}>
           <CustomerAge sx={{ height: '100%' }} />
-        </Grid>
-        <Grid lg={4} sm={6} xs={12}>
-          <CustomerCluster sx={{ height: '100%' }} />
         </Grid>
         <Grid lg={12} sm={6} xs={12}>
           <CustomerLocation sx={{ height: '100%' }} />

@@ -13,13 +13,12 @@ import { Typography } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { alpha, useTheme } from '@mui/material/styles';
 import type { SxProps } from '@mui/material/styles';
-import { ArrowClockwise as ArrowClockwiseIcon } from '@phosphor-icons/react/dist/ssr/ArrowClockwise';
-import { ArrowRight as ArrowRightIcon } from '@phosphor-icons/react/dist/ssr/ArrowRight';
 import { useEffect, useState } from 'react';
 import { fontFamily } from '../../../styles/theme/typography';
 
 export interface CustomerClusterProps {
   sx?: SxProps;
+  // onSelectCluster: (customerCount: number) => void; 
 }
  
 export function CustomerCluster({ sx }: CustomerClusterProps): React.JSX.Element {
@@ -69,22 +68,67 @@ export function CustomerCluster({ sx }: CustomerClusterProps): React.JSX.Element
   return (
     <Card sx={sx}>
       <CardHeader title="Customer Cluster Demographic"/>
-      <CardContent>
+      <CardContent sx={{pt: 1}}>
         <ClusterTypography data={data} totalUser={totalUser} />
       </CardContent>
     </Card>
+    // <Card sx={sx}>
+    //   <CardHeader title="Customer Cluster Demographic" />
+    //   <CardContent sx={{pt: 1}}>
+    //     <Grid container spacing={2}>
+    //       {data.map((item) => {
+    //         const percentage = ((item.count / totalUser) * 100).toFixed(2);
+
+    //         return (
+    //           <Grid item xs={12} sm={4} key={item.Cluster}>
+    //             <Button
+    //               variant="outlined"
+    //               onClick={() => onSelectCluster(item.count)} // Pass the selected cluster's total customers to the parent
+    //               fullWidth
+    //             >
+    //               <Card sx={{ width: '100%' }}>
+    //                 <CardContent>
+    //                   <Typography variant="h5" fontWeight="bold" color="primary">
+    //                     {item.Cluster}
+    //                   </Typography>
+    //                   <Typography variant="body2" color="text.secondary">
+    //                     Count: {item.count}
+    //                   </Typography>
+    //                   <Typography variant="body2" color="text.secondary">
+    //                     Percentage: {percentage}%
+    //                   </Typography>
+    //                   <Typography variant="body2" color="text.secondary">
+    //                     Average Recency: {item.avgRecency.toFixed(0)} days
+    //                   </Typography>
+    //                   <Typography variant="body2" color="text.secondary">
+    //                     Average Frequency: {item.avgFrequency.toFixed(0)} times
+    //                   </Typography>
+    //                   <Typography variant="body2" color="text.secondary">
+    //                     Average Monetary: ${item.avgMonetary.toFixed(2)}
+    //                   </Typography>
+    //                 </CardContent>
+    //               </Card>
+    //             </Button>
+    //           </Grid>
+    //         );
+    //       })}
+    //     </Grid>
+    //   </CardContent>
+    // </Card>
   );
 }
 
 // Displaying clusters with all metrics
 function ClusterTypography({ data, totalUser }: { data: { Cluster: string; count: number; avgRecency: number; avgFrequency: number; avgMonetary: number }[]; totalUser: number }) {
   return (
-    <Stack spacing={2}>
+    <Grid container spacing={2}>
       {data.map((item) => {
         const percentage = ((item.count / totalUser) * 100).toFixed(2); // Calculate percentage
 
         return (
-          <Stack key={item.Cluster} spacing={1}>
+          <Grid item xs={12} sm={4} key={item.Cluster}>
+            <Card variant="outlined" sx={{ height: '100%'}}>
+            <CardContent>
             <Typography variant="h5" fontWeight="bold" color="primary">
               {item.Cluster}
             </Typography>
@@ -103,10 +147,11 @@ function ClusterTypography({ data, totalUser }: { data: { Cluster: string; count
             <Typography variant="body2" color="text.secondary">
               Average Monetary: ${item.avgMonetary.toFixed(2)}
             </Typography>
-            <Divider />
-          </Stack>
+            </CardContent>
+            </Card>
+          </Grid>
         );
       })}
-    </Stack>
+    </Grid>
   );
 }
