@@ -67,85 +67,46 @@ export function CustomerCluster({ sx }: CustomerClusterProps): React.JSX.Element
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Customer Cluster Demographic"/>
+      <CardHeader title="Customer Clusters"/>
       <CardContent sx={{pt: 1}}>
         <ClusterTypography data={data} totalUser={totalUser} />
       </CardContent>
     </Card>
-    // <Card sx={sx}>
-    //   <CardHeader title="Customer Cluster Demographic" />
-    //   <CardContent sx={{pt: 1}}>
-    //     <Grid container spacing={2}>
-    //       {data.map((item) => {
-    //         const percentage = ((item.count / totalUser) * 100).toFixed(2);
-
-    //         return (
-    //           <Grid item xs={12} sm={4} key={item.Cluster}>
-    //             <Button
-    //               variant="outlined"
-    //               onClick={() => onSelectCluster(item.count)} // Pass the selected cluster's total customers to the parent
-    //               fullWidth
-    //             >
-    //               <Card sx={{ width: '100%' }}>
-    //                 <CardContent>
-    //                   <Typography variant="h5" fontWeight="bold" color="primary">
-    //                     {item.Cluster}
-    //                   </Typography>
-    //                   <Typography variant="body2" color="text.secondary">
-    //                     Count: {item.count}
-    //                   </Typography>
-    //                   <Typography variant="body2" color="text.secondary">
-    //                     Percentage: {percentage}%
-    //                   </Typography>
-    //                   <Typography variant="body2" color="text.secondary">
-    //                     Average Recency: {item.avgRecency.toFixed(0)} days
-    //                   </Typography>
-    //                   <Typography variant="body2" color="text.secondary">
-    //                     Average Frequency: {item.avgFrequency.toFixed(0)} times
-    //                   </Typography>
-    //                   <Typography variant="body2" color="text.secondary">
-    //                     Average Monetary: ${item.avgMonetary.toFixed(2)}
-    //                   </Typography>
-    //                 </CardContent>
-    //               </Card>
-    //             </Button>
-    //           </Grid>
-    //         );
-    //       })}
-    //     </Grid>
-    //   </CardContent>
-    // </Card>
   );
 }
 
 // Displaying clusters with all metrics
 function ClusterTypography({ data, totalUser }: { data: { Cluster: string; count: number; avgRecency: number; avgFrequency: number; avgMonetary: number }[]; totalUser: number }) {
+  // Define colors for each cluster
+  const clusterColors: Record<string, string> = {
+    'Loyal Customers': 'var(--mui-palette-primary-main)',
+    'Casual Customers': 'var(--mui-palette-success-main)',
+    'Lost Customers': 'var(--mui-palette-info-main)',
+  };
+
   return (
     <Grid container spacing={2}>
       {data.map((item) => {
-        const percentage = ((item.count / totalUser) * 100).toFixed(2); // Calculate percentage
+        const percentage = ((item.count / totalUser) * 100).toFixed(1);
 
         return (
           <Grid item xs={12} sm={4} key={item.Cluster}>
             <Card variant="outlined" sx={{ height: '100%'}}>
             <CardContent>
-            <Typography variant="h5" fontWeight="bold" color="primary">
+            <Typography variant="h5" fontWeight="bold" sx={{mb: 1, color: clusterColors[item.Cluster]}}>
               {item.Cluster}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Count: {item.count}
+              {percentage}%
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Percentage: {percentage}%
+              Avg Recency: {item.avgRecency.toFixed(0)} days
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Average Recency: {item.avgRecency.toFixed(0)} days
+              Avg Frequency: {item.avgFrequency.toFixed(0)} times
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Average Frequency: {item.avgFrequency.toFixed(0)} times
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Average Monetary: ${item.avgMonetary.toFixed(2)}
+              Avg Monetary: ${item.avgMonetary.toFixed(2)}
             </Typography>
             </CardContent>
             </Card>

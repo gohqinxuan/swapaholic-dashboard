@@ -14,7 +14,6 @@ import { TotalCustomers } from '@/components/dashboard/customer/total-customers'
 import { CustomerAge } from '@/components/dashboard/customer/customer-age';
 import { CustomerGender } from '@/components/dashboard/customer/customer-gender';
 import { CustomerLocation } from '@/components/dashboard/customer/customer-location';
-import { Traffic } from '@/components/dashboard/customer/traffic';
 import { CustomerCluster } from '@/components/dashboard/customer/customer-cluster';
 import { CategoryAnalysis } from '@/components/dashboard/customer/category-analysis';
 import { WebAnalysis } from '@/components/dashboard/customer/web-analysis';
@@ -26,19 +25,19 @@ export default function Page(): React.JSX.Element {
   return (
 
       <Grid container spacing={3}>
-        <Grid lg={3} sm={6} xs={12}>
+        <Grid lg={3} sm={12} xs={12}>
           <TotalCustomers sx={{ height: '100%' }} />
         </Grid>
         <Grid lg={9} xs={12}>
           <CustomerCluster sx={{ height: '100%' }} />
         </Grid>
-        <Grid lg={4} sm={6} xs={12}>
+        <Grid lg={4} sm={12} xs={12}>
           <CustomerGender sx={{ height: '100%' }} />
         </Grid>
-        <Grid lg={8} sm={6} xs={12}>
+        <Grid lg={8} sm={12} xs={12}>
           <CustomerAge sx={{ height: '100%' }} />
         </Grid>
-        <Grid lg={12} sm={6} xs={12}>
+        <Grid lg={12} sm={12} xs={12}>
           <CustomerLocation sx={{ height: '100%' }} />
         </Grid>
         <Grid lg={6} sm={6} xs={12}>
@@ -47,9 +46,6 @@ export default function Page(): React.JSX.Element {
         <Grid lg={6} sm={6} xs={12}>
           <WebAnalysis sx={{ height: '100%' }} />
         </Grid>
-        {/* <Grid lg={4} md={6} xs={12}>
-          <Traffic chartSeries={[63, 15, 22]} labels={['Desktop', 'Tablet', 'Phone']} sx={{ height: '100%' }} />
-        </Grid> */}
       </Grid>
 
   );
