@@ -12,7 +12,6 @@ import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
 
 import { config } from '@/config';
-import { TotalCustomers } from '@/components/dashboard/customer/total-customers';
 import { CustomerAge } from '@/components/dashboard/customer/customer-age';
 import { CustomerGender } from '@/components/dashboard/customer/customer-gender';
 import { CustomerLocation } from '@/components/dashboard/customer/customer-location';
@@ -27,9 +26,6 @@ export default function Page(): React.JSX.Element {
   return (
 
       <Grid container spacing={3}>
-        {/* <Grid lg={3} sm={12} xs={12}>
-          <TotalCustomers sx={{ height: '100%' }} />
-        </Grid> */}
         <Grid lg={12} sm={12} xs={12}>
             <Typography variant="h5" fontWeight="bold">CUSTOMER DEMOGRAPHIC</Typography>
         </Grid>
