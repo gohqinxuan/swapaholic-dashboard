@@ -6,16 +6,20 @@
 
 ### Front-end
 
-- Make sure your Node.js and npm versions are up to date
-- Install dependencies: `npm install` or `yarn`
-- Start the server: `npm run dev` or `yarn dev`
-- Open browser: `http://localhost:3000`
+1. Make sure your Node.js and npm versions are up to date
+2. Install dependencies: `npm install` or `yarn`
+3. Start the server: `npm run dev` or `yarn dev`
+4. Open browser: `http://localhost:3000`
 
 ### Back-end
 
 
 ## Hosting Information
 
+1. Push your code to your git repository
+2. Import the React project into Vercel
+3. Vercel will enable the correct settings for the deployment
+4. Application is deployed
 #### [Hosted URL] (https://swapaholic-dashboard.vercel.app/auth/sign-in)
 
 ## License
