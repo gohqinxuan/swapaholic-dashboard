@@ -8,6 +8,8 @@ import { Download as DownloadIcon } from '@phosphor-icons/react/dist/ssr/Downloa
 import { Plus as PlusIcon } from '@phosphor-icons/react/dist/ssr/Plus';
 import { Upload as UploadIcon } from '@phosphor-icons/react/dist/ssr/Upload';
 import dayjs from 'dayjs';
+import Divider from '@mui/material/Divider';
+import Chip from '@mui/material/Chip';
 
 import { config } from '@/config';
 import { TotalCustomers } from '@/components/dashboard/customer/total-customers';
@@ -25,11 +27,11 @@ export default function Page(): React.JSX.Element {
   return (
 
       <Grid container spacing={3}>
-        <Grid lg={3} sm={12} xs={12}>
+        {/* <Grid lg={3} sm={12} xs={12}>
           <TotalCustomers sx={{ height: '100%' }} />
-        </Grid>
-        <Grid lg={9} xs={12}>
-          <CustomerCluster sx={{ height: '100%' }} />
+        </Grid> */}
+        <Grid lg={12} sm={12} xs={12}>
+            <Typography variant="h5" fontWeight="bold">CUSTOMER DEMOGRAPHIC</Typography>
         </Grid>
         <Grid lg={4} sm={12} xs={12}>
           <CustomerGender sx={{ height: '100%' }} />
@@ -39,6 +41,12 @@ export default function Page(): React.JSX.Element {
         </Grid>
         <Grid lg={12} sm={12} xs={12}>
           <CustomerLocation sx={{ height: '100%' }} />
+        </Grid>
+        <Grid lg={12} sm={12} xs={12}>
+          <Typography variant="h5" fontWeight="bold">CUSTOMER BEHAVIOUR</Typography>
+        </Grid>
+        <Grid lg={12} xs={12}>
+          <CustomerCluster sx={{ height: '100%' }} />
         </Grid>
         <Grid lg={6} sm={6} xs={12}>
           <CategoryAnalysis sx={{ height: '100%' }} />
