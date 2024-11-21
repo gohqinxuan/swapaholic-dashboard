@@ -26,38 +26,47 @@ export function SalesDays({ sx }: SalesDaysProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load and parse the CSV file
-    d3.csv('/datasets/transactions_new.csv').then((data) => {
-      data.forEach((d: any) => {
-        d.total_amount = +d.total_amount;
-        d.year = +d.year;
+    // Fetch CSV data from the backend
+    fetch('http://localhost:5000/csv/data?filename=customer_transaction_new.csv')
+      .then((response) => response.json())
+      .then((data) => {
+        // Parse the CSV string into an array of objects
+        const parsedData = d3.csvParse(data.data); 
+
+        // Ensure numeric values for 'total_amount' and 'year'
+        parsedData.forEach((d: any) => {
+          d.total_amount = +d.total_amount;
+          d.year = +d.year;
+        });
+
+        // Find the latest year in the dataset
+        const latestYear = d3.max(parsedData, (d: any) => d.year);
+
+        // Filter data for the latest year
+        const filteredData = parsedData
+          .filter((d: any) => d.year === latestYear)
+          .map((d: any) => ({
+            ...d,
+            total_amount: +d.total_amount, // Ensure total_amount is a number
+          }));
+
+        // Group data by day and calculate total sales for each day
+        const salesByDay = d3.rollup(filteredData, v => d3.sum(v, d => +d.total_amount), d => d.day);
+
+        // Convert data to a suitable format for the bar chart
+        const daySalesData = Array.from(salesByDay, ([day, total]) => ({ day, total }));
+
+        // Define the order of days
+        const daysOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+        // Sort the data by the defined order of days
+        daySalesData.sort((a, b) => daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day));
+
+        setData(daySalesData);
+      })
+      .catch((error) => {
+        console.error('Error fetching CSV data:', error);
       });
-
-      // Find the latest year in the dataset
-      const latestYear = d3.max(data, (d: any) => d.year);
-
-      // Filter data for the latest year
-      const filteredData = data
-        .filter((d: any) => d.year === latestYear)
-        .map((d: any) => ({
-          ...d,
-          total_amount: +d.total_amount, // Ensure total_amount is a number
-        }));
-
-      // Group data by day and calculate total sales for each day
-      const salesByDay = d3.rollup(filteredData, v => d3.sum(v, d => +d.total_amount), d => d.day);
-
-      // Convert data to a suitable format for the bar chart
-      const daySalesData = Array.from(salesByDay, ([day, total]) => ({ day, total }));
-
-      // Define the order of days
-      const daysOrder = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-      // Sort the data by the defined order of days
-      daySalesData.sort((a, b) => daysOrder.indexOf(a.day) - daysOrder.indexOf(b.day));
-
-      setData(daySalesData);
-    });
   }, []);
 
   // Calculate total sales for percentage calculation

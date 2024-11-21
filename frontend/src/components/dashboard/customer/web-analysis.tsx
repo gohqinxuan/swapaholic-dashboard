@@ -8,41 +8,50 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import Stack from '@mui/material/Stack';
-import { Grid } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import { Icon } from '@mui/material';
 import { Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from '@mui/material';
 import { Typography } from '@mui/material';
-import Divider from '@mui/material/Divider';
 import type { SxProps } from '@mui/material/styles';
 import { useEffect, useState } from 'react';
-import { Icon } from '@mui/material';
-import { Box } from '@mui/material';
 import { fontFamily } from '../../../styles/theme/typography';
-import { ThumbsUp as ThumbsUpIcon } from '@phosphor-icons/react/dist/ssr/ThumbsUp';
-import { ThumbsDown as ThumbsDownIcon } from '@phosphor-icons/react/dist/ssr/ThumbsDown'; 
+import { Eye as EyeIcon } from '@phosphor-icons/react/dist/ssr/Eye';
+import { Clock as ClockIcon } from '@phosphor-icons/react/dist/ssr/Clock';
 
-export interface CategoryAnalysisProps {
+export interface WebAnalysisProps {
   sx?: SxProps;
 }
  
-export function CategoryAnalysis({ sx }: CategoryAnalysisProps): React.JSX.Element {
+export function WebAnalysis({ sx }: WebAnalysisProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
   const [selectedCluster, setSelectedCluster] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load and parse the CSV file
-    d3.csv('/datasets/customer_segmentation_most_least_category.csv').then((data) => {
-        const processedData = data.map((d) => ({
-            Cluster: d.Cluster,
-            MostPopular: d.Most_Popular_Category,
-            LeastPopular: d.Least_Popular_Category,
-          }));
+    // Fetch CSV data from the backend
+    fetch('http://localhost:5000/csv/data?filename=avg_web_session_customer.csv')
+      .then((response) => response.json()) 
+      .then((data) => {
+        // Parse the CSV string into an array of objects
+        const parsedData = d3.csvParse(data.data); // 'data.data' assumes the backend sends CSV in the 'data' field of the response
+        
+        // Process the data to map it into the desired format
+        const processedData = parsedData.map((d: any) => ({
+          Cluster: d.Cluster,
+          PageView: +d.page_view_count, // Ensure it's treated as a number
+          SessionLength: +d.session_length_in_sec, // Ensure it's treated as a number
+        }));
+
         setData(processedData);
 
         // Set the first cluster as the default selected cluster
-      if (processedData.length > 0) {
-        setSelectedCluster(processedData[0].Cluster);
-      }
-    });
+        if (processedData.length > 0) {
+          setSelectedCluster(processedData[0].Cluster);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching CSV data:', error);
+      });
   }, []);
 
   // Handler to set the selected cluster
@@ -55,7 +64,7 @@ export function CategoryAnalysis({ sx }: CategoryAnalysisProps): React.JSX.Eleme
 
   return (
     <Card sx={sx}>
-      <CardHeader title="Category Analysis"
+      <CardHeader title="Web Analysis"
       action={
         <FormControl variant="outlined" sx={{ minWidth: 120 }}>
           <InputLabel id="cluster-select-label">Select Cluster</InputLabel>
@@ -75,40 +84,36 @@ export function CategoryAnalysis({ sx }: CategoryAnalysisProps): React.JSX.Eleme
       }
       />
       <CardContent sx={{pt: 1}}>
-        <ClusterCatTypography data={filteredData} />
+        <ClusterWebTypography data={filteredData} />
       </CardContent>
     </Card>
   );
 }
 
 // Displaying clusters with all metrics
-function ClusterCatTypography({ data }: { data: { Cluster: string; MostPopular: string; LeastPopular: string }[] }) {
+function ClusterWebTypography({ data }: { data: { Cluster: string; PageView: number; SessionLength: number }[] }) {
   return (
     <Grid>
       {data.map((item) => {
         return (
-            <Card sx={{ height: '100%'}}>
+          <Card sx={{ height: '100%'}}>
             <CardContent>
             <Typography variant="body1" fontWeight="bold" color="text.secondary" sx={{mb: 2}}>
                 {item.Cluster}
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <Icon color="primary" component={ThumbsUpIcon} sx={{mr: 1}}/>
-            <Typography variant="h6" color="text.secondary">
-                Most Popular Category
-            </Typography>
+            <Icon color="primary" component={EyeIcon} sx={{mr: 1}}/>
+            <Typography variant="body1" color="text.secondary">Pages Viewed</Typography>
             </Box>
             <Typography variant="h4" fontWeight="bold" color="primary" sx={{mb: 2}}>
-                {item.MostPopular}
+                {item.PageView} 
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <Icon color="primary" component={ThumbsDownIcon} sx={{mr: 1}}/>
-            <Typography variant="h6" color="text.secondary">
-                Least Popular Category
-            </Typography>
+            <Icon color="primary" component={ClockIcon} sx={{mr: 1}}/>
+            <Typography variant="body1" color="text.secondary">Time Spent</Typography>
             </Box>
             <Typography variant="h4" fontWeight="bold" color="primary">
-                {item.LeastPopular}
+                {item.SessionLength} seconds
             </Typography>
             </CardContent>
             </Card>

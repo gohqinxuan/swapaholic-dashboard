@@ -18,18 +18,24 @@ import { fontFamily } from '../../../styles/theme/typography';
 
 export interface CustomerClusterProps {
   sx?: SxProps;
-  // onSelectCluster: (customerCount: number) => void; 
 }
  
 export function CustomerCluster({ sx }: CustomerClusterProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load and parse the CSV file
-    d3.csv('/datasets/customer_segmentation.csv').then((data) => {
-      const clusterData = processClusterData(data);
-      setData(clusterData);
-    });
+    // Fetch the CSV data from the backend
+    fetch('http://localhost:5000/csv/data?filename=customer_segmentation.csv')
+      .then((response) => response.json()) 
+      .then((data) => {
+        // Parse the CSV string into an array of objects
+        const parsedData = d3.csvParse(data.data);
+        const clusterData = processClusterData(parsedData);
+        setData(clusterData);
+      })
+      .catch((error) => {
+        console.error('Error fetching CSV data:', error);
+      });
   }, []);
 
   const processClusterData = (data: any[]) => {
