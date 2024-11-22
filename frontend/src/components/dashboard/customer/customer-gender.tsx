@@ -23,19 +23,26 @@ export interface CustomerGenderProps {
 
 export function CustomerGender({ sx }: CustomerGenderProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
-
   useEffect(() => {
-    // Load and parse the CSV file
-    d3.csv('/datasets/customer_new.csv').then((data) => {
+    // Fetch the CSV data from the backend
+    fetch('http://localhost:5000/csv/data?filename=customer_transaction_new.csv')
+    .then((response) => response.json())
+    .then((data) => {
+      // Parse the CSV string into an array of objects
+      const parsedData = d3.csvParse(data.data);
+
       // Process the data to get counts of Male and Female
-      const genderCounts = d3.rollup(data, v => v.length, d => d.gender);
+      const genderCounts = d3.rollup(parsedData, v => v.length, d => d.gender);
 
       // Convert the data into a format suitable for a pie chart
       const genderData = Array.from(genderCounts, ([key, value]) => ({ gender: key, count: value }));
 
-      setData(genderData);
+      setData(genderData); // Update the state with the processed gender data
+    })
+    .catch((error) => {
+      console.error('Error fetching CSV data:', error);
     });
-  }, []);
+}, []);
 
   // Calculate total sales for percentage calculation
   const totalUser = data.reduce((sum, d) => sum + d.count, 0);

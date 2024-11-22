@@ -19,19 +19,28 @@ export function YearlySales({ sx }: YearlySalesProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load and parse the CSV file
-    d3.csv('/datasets/transactions_new.csv').then((data) => {
-      // Group data by year and calculate total sales for each year
-      const salesByYear = d3.rollup(data, v => d3.sum(v, d => +d.total_amount), d => d.year);
+    // Fetch the CSV data from the backend
+    fetch('http://localhost:5000/csv/data?filename=customer_transaction_new.csv')
+      .then((response) => response.json())
+      .then((data) => {
+        // Parse the CSV string into an array of objects
+        const parsedData = d3.csvParse(data.data);
 
-      // Convert data to a suitable format for the bar chart
-      const yearlySalesData = Array.from(salesByYear, ([year, total]) => ({ year, total }));
+        // Group data by year and calculate total sales for each year
+        const salesByYear = d3.rollup(parsedData, v => d3.sum(v, d => +d.total_amount), d => d.year);
 
-      // Sort the data by year in ascending order
-      yearlySalesData.sort((a, b) => d3.ascending(a.year, b.year));
+        // Convert data to a suitable format for the bar chart
+        const yearlySalesData = Array.from(salesByYear, ([year, total]) => ({ year, total }));
 
-      setData(yearlySalesData);
-    });
+        // Sort the data by year in ascending order
+        yearlySalesData.sort((a, b) => d3.ascending(a.year, b.year));
+
+        // Update the state with the yearly sales data
+        setData(yearlySalesData);
+      })
+      .catch((error) => {
+        console.error('Error fetching CSV data:', error);
+      });
   }, []);
 
   return (

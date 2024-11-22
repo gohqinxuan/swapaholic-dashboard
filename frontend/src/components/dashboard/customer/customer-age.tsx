@@ -22,30 +22,41 @@ export function CustomerAge({ sx }: CustomerAgeProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load and parse the CSV file
-    d3.csv('/datasets/customer_new.csv').then((data) => {
-      // Process the data to group ages
-      const ageGroups = d3.rollups(data, v => v.length, d => {
-        const age = +d.age;
-        if (age >= 20 && age <= 24) return '20-24';
-        if (age >= 25 && age <= 29) return '25-29';
-        if (age >= 30 && age <= 34) return '30-34';
-        if (age >= 35 && age <= 39) return '35-39';
-        if (age >= 40 && age <= 44) return '40-44';
-        if (age >= 45 && age <= 49) return '45-49';
-        return '50+';
+    // Fetch CSV data from backend API
+    fetch('http://localhost:5000/csv/data?filename=customer_transaction_new.csv')
+      .then((response) => response.json())
+      .then((data) => {
+        // Process the CSV data from response
+        const processedData = d3.csvParse(data.data).map((d) => ({
+          age: +d.age, // Ensure the age is a number
+        }));
+
+        // Group by age ranges
+        const ageGroups = d3.rollups(processedData, v => v.length, d => {
+          const age = d.age;
+          if (age >= 20 && age <= 24) return '20-24';
+          if (age >= 25 && age <= 29) return '25-29';
+          if (age >= 30 && age <= 34) return '30-34';
+          if (age >= 35 && age <= 39) return '35-39';
+          if (age >= 40 && age <= 44) return '40-44';
+          if (age >= 45 && age <= 49) return '45-49';
+          return '50+';
+        });
+
+        // Format the grouped data
+        const ageData = Array.from(ageGroups, ([key, value]) => ({ ageRange: key, count: value }));
+
+        // Define the order of age groups
+        const ageOrder = ['20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50+'];
+
+        // Sort the data by the defined order of age groups
+        ageData.sort((a, b) => ageOrder.indexOf(a.ageRange) - ageOrder.indexOf(b.ageRange));
+
+        setData(ageData);
+      })
+      .catch((error) => {
+        console.error('Error fetching CSV:', error);
       });
-
-      const ageData = Array.from(ageGroups, ([key, value]) => ({ ageRange: key, count: value }));
-
-      // Define the order of age groups
-      const ageOrder = ['20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50+'];
-
-      // Sort the data by the defined order of age groups
-      ageData.sort((a, b) => ageOrder.indexOf(a.ageRange) - ageOrder.indexOf(b.ageRange));
-
-      setData(ageData);
-    });
   }, []);
 
   // Calculate total sales for percentage calculation

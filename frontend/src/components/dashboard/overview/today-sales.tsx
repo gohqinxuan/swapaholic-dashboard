@@ -35,42 +35,51 @@ export function TodaySales({ sx }: TodaySalesProps): React.JSX.Element {
   };
 
   useEffect(() => {
-    // Load and process the CSV file
-    d3.csv('/datasets/transactions_new.csv').then(function (data) {
-      // Extract date parts as YYYY-MM-DD strings
-      data.forEach((d: any) => {
-        d.date_only = d.created_at.split(' ')[0];
+    // Fetch the CSV data from the backend
+    fetch('http://localhost:5000/csv/data?filename=customer_transaction_new.csv')
+      .then((response) => response.json()) 
+      .then((data) => {
+        // Parse the CSV string into an array of objects
+        const parsedData = d3.csvParse(data.data);
+
+        // Extract date parts as YYYY-MM-DD strings
+        parsedData.forEach((d: any) => {
+          d.date_only = d.transaction_date;
+        });
+
+        // Find the latest date string in the dataset
+        const latestDate = d3.max(parsedData, (d: any) => d.date_only);
+
+        // Filter transactions by the latest date string
+        const latestTransactions = parsedData.filter((d: any) => d.date_only === latestDate);
+
+        // Calculate the total sales for the latest date
+        const totalSales = d3.sum(latestTransactions, (d: any) => +d.total_amount);
+
+        // Find the second latest date (yesterday)
+        const secondLatestDate = d3.max(parsedData.filter((d: any) => d.date_only < latestDate), (d: any) => d.date_only);
+
+        // Filter transactions by the second latest date string
+        const secondLatestTransactions = parsedData.filter((d: any) => d.date_only === secondLatestDate);
+
+        // Calculate the total sales for the second latest date
+        const totalSalesYesterday = d3.sum(secondLatestTransactions, (d: any) => +d.total_amount);
+
+        // Calculate the percentage difference
+        const salesDiff = ((totalSales - totalSalesYesterday) / totalSalesYesterday) * 100;
+
+        // Set the trend direction and sales difference
+        setTrend(totalSales >= totalSalesYesterday ? 'up' : 'down');
+        setDiff(Math.abs(salesDiff));
+
+        // Update the state with today's sales
+        setSales(formatToThousands(totalSales));
+      })
+      .catch((error) => {
+        console.error('Error fetching CSV data:', error);
       });
-
-      // Find the latest date string in the dataset
-      const latestDate = d3.max(data, (d: any) => d.date_only);
-
-      // Filter transactions by the latest date string
-      const latestTransactions = data.filter((d: any) => d.date_only === latestDate);
-
-      // Calculate the total sales for the latest date
-      const totalSales = d3.sum(latestTransactions, (d: any) => +d.total_amount);
-
-      // Find the second latest date (yesterday)
-      const secondLatestDate = d3.max(data.filter((d: any) => d.date_only < latestDate), (d: any) => d.date_only);
-
-      // Filter transactions by the second latest date string
-      const secondLatestTransactions = data.filter((d: any) => d.date_only === secondLatestDate);
-
-      // Calculate the total sales for the second latest date
-      const totalSalesYesterday = d3.sum(secondLatestTransactions, (d: any) => +d.total_amount);
-
-      // Calculate the percentage difference
-      const salesDiff = ((totalSales - totalSalesYesterday) / totalSalesYesterday) * 100;
-
-      // Set the trend direction and sales difference
-      setTrend(totalSales >= totalSalesYesterday ? 'up' : 'down');
-      setDiff(Math.abs(salesDiff));
-
-      // Update the state with today's sales
-      setSales(formatToThousands(totalSales));
-    });
   }, []);
+
 
   // Determine the trend icon and color
   const TrendIcon = trend === 'up' ? ArrowUpIcon : ArrowDownIcon;

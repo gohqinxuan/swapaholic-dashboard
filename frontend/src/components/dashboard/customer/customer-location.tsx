@@ -14,24 +14,56 @@ export interface CustomerLocationProps {
 
 export function CustomerLocation({ sx }: CustomerLocationProps): React.JSX.Element {
   const [geoData, setGeoData] = useState<any>(null);
-  const [customerData, setCustomerData] = useState<any[]>([]); // Updated to an array of objects
+  const [customerData, setCustomerData] = useState<any[]>([]);
 
   useEffect(() => {
     // Fetch GeoJSON (map boundary data)
-    const geoJSONPromise = fetch('/datasets/singapore_region.geojson')
-      .then((response) => response.json());
+    const geoJSONPromise = fetch('http://localhost:5000/geojson/data?filename=singapore_region.geojson')
+      .then((response) => response.json())
+      .then((geo) => {
+        // Validate the GeoJSON structure
+        if (!geo || !geo.features) {
+          console.error('Invalid GeoJSON data:', geo);
+          throw new Error('GeoJSON data is invalid');
+        }
+        return geo;
+      })
+      .catch((error) => {
+        console.error('Error fetching GeoJSON:', error);
+      });
 
-    // Fetch customer data CSV
-    const customerDataPromise = d3.csv('/datasets/region.csv', (d: any) => ({
-      district: d.district.trim(),
-      count: +d.count,
-    }));
+    // Fetch customer data CSV from backend
+    const customerDataPromise = fetch('http://localhost:5000/csv/data?filename=customer_transaction_new.csv')
+      .then((response) => response.json())
+      .then((data) => {
+        // Parse the CSV data
+        const parsedData = d3.csvParse(data.data, (d: any) => ({
+          customer_id: d.customer_id.trim(),
+          district: d.district.trim(),
+        }));
+
+        // Create a map to store unique customer counts per district
+        const districtCounts = d3.rollups(
+          parsedData,
+          // Calculate the number of unique customers per district
+          (v) => new Set(v.map((d) => d.customer_id)).size,
+          (d) => d.district
+        );
+
+        // Convert the district counts to an array of objects
+        const districtCountsArray = districtCounts.map(([district, count]) => ({
+          district,
+          count,
+        }));
+
+        return districtCountsArray;
+      });
 
     Promise.all([geoJSONPromise, customerDataPromise]).then(([geo, customers]) => {
       setGeoData(geo);
       setCustomerData(customers);
     });
-  }, []);
+  }, []); // Empty dependency array ensures the fetch only runs once
 
   useEffect(() => {
     if (geoData && customerData.length > 0) {
@@ -39,7 +71,7 @@ export function CustomerLocation({ sx }: CustomerLocationProps): React.JSX.Eleme
     }
   }, [geoData, customerData]);
 
-  const drawMap = (singaporeGeoJSON: any, data: any[]) => { // Accept data as a parameter
+  const drawMap = (singaporeGeoJSON: any, data: any[]) => {
     const features = singaporeGeoJSON.features;
 
     if (!features || features.length === 0) {
@@ -74,7 +106,7 @@ export function CustomerLocation({ sx }: CustomerLocationProps): React.JSX.Eleme
     if (tooltip.empty()) {
       d3.select('body')
         .append('div')
-        .attr('id', 'region-tooltip')
+        .attr('id', 'region-tooltip');
     }
 
     // Style tooltip
@@ -107,10 +139,7 @@ export function CustomerLocation({ sx }: CustomerLocationProps): React.JSX.Eleme
         const customerCount = regionData ? regionData.count : 0;
         return colorScale(customerCount);  // Apply color based on customer count
       })
-      // .attr('stroke', '#333')
-      // .attr('stroke-width', '1px')
       .attr('class', 'region')
-      // .style('opacity', .8)
       .on('mouseover', function (event, d) {
         const regionName = (d as any).properties.district.trim();
         const regionData = data.find((item) => item.district === regionName);
@@ -124,10 +153,6 @@ export function CustomerLocation({ sx }: CustomerLocationProps): React.JSX.Eleme
           .style('left', `${event.pageX + 10}px`)
           .style('top', `${event.pageY - 28}px`);
       })
-      // .on('mousemove', function (event) {
-      //   tooltip.style('left', (event.pageX + 5) + 'px')
-      //     .style('top', (event.pageY - 28) + 'px');
-      // })
       .on('mouseout', function () {
         d3.select(this).style('opacity', 1);
 

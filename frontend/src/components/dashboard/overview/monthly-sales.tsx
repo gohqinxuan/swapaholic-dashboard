@@ -17,17 +17,26 @@ export function MonthlySales({ sx }: MonthlySalesProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load and parse the CSV file
-    d3.csv('/datasets/monthly_sales.csv').then((data) => {
-      data.forEach((d: any) => {
-        d.total_amount = +d.total_amount;
-        d.month = d.month;
-        d.type = d.type;
-      });
+    // Fetch CSV data from the backend
+    fetch('http://localhost:5000/csv/data?filename=monthly_sales.csv')
+      .then((response) => response.json())
+      .then((data) => {
+        // Parse the CSV string into an array of objects
+        const parsedData = d3.csvParse(data.data); 
+        
+        // Process the data to ensure types are correctly set
+        const processedData = parsedData.map((d: any) => ({
+          month: d.month,
+          type: d.type,
+          total_amount: +d.total_amount, // Ensure total_amount is treated as a number
+        }));
 
-      setData(data);
-    });
-  }, []);
+        setData(processedData);
+      })
+      .catch((error) => {
+        console.error('Error fetching CSV data:', error);
+      });
+}, []);
 
   return (
     <Card sx={sx}>

@@ -24,37 +24,45 @@ export function PastSales({ sx }: PastSalesProps): React.JSX.Element {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    // Load and parse the CSV file
-    d3.csv('/datasets/transactions_new.csv').then((data) => {
-      // Extract date parts as YYYY-MM-DD strings
-      data.forEach((d: any) => {
-        d.date_only = d.created_at.split(' ')[0];
+    // Fetch CSV data from the backend
+    fetch('http://localhost:5000/csv/data?filename=customer_transaction_new.csv')
+      .then((response) => response.json()) 
+      .then((data) => {
+        // Parse the CSV string into an array of objects
+        const parsedData = d3.csvParse(data.data); 
+
+        // Extract date parts as YYYY-MM-DD strings
+        parsedData.forEach((d: any) => {
+          d.date_only = d.transaction_date;
+        });
+
+        // Parse dates and sort data by date
+        parsedData.forEach((d: any) => {
+          d.date_only = d3.timeParse('%Y-%m-%d')(d.date_only);
+        });
+
+        // Sort data by date in descending order
+        parsedData.sort((a: any, b: any) => b.date_only - a.date_only);
+
+        // Find the latest date in the dataset
+        const latestDate = d3.max(parsedData, (d: any) => d.date_only);
+
+        // Filter for the past 7 days
+        const sevenDaysAgo = d3.timeDay.offset(latestDate, -7);
+        const past7DaysData = parsedData.filter((d: any) => d.date_only >= sevenDaysAgo);
+
+        // Aggregate sales by date
+        const aggregatedData = d3.rollups(
+          past7DaysData,
+          (v) => d3.sum(v, (d: any) => +d.total_amount),
+          (d: any) => d.date_only
+        ).map(([date, sales]) => ({ date, sales }));
+
+        setData(aggregatedData);
+      })
+      .catch((error) => {
+        console.error('Error fetching CSV data:', error);
       });
-
-      // Parse dates and sort data by date
-      data.forEach((d: any) => {
-        d.date_only = d3.timeParse('%Y-%m-%d')(d.date_only);
-      });
-
-      // Sort data by date in descending order
-      data.sort((a: any, b: any) => b.date_only - a.date_only);
-
-      // Find the latest date string in the dataset
-      const latestDate = d3.max(data, (d: any) => d.date_only);
-
-      // Filter for the past 7 days
-      const sevenDaysAgo = d3.timeDay.offset(latestDate, -7);
-      const past7DaysData = data.filter((d: any) => d.date_only >= sevenDaysAgo);
-
-      // Aggregate sales by date
-      const aggregatedData = d3.rollups(
-        past7DaysData,
-        (v) => d3.sum(v, (d: any) => +d.total_amount),
-        (d: any) => d.date_only
-      ).map(([date, sales]) => ({ date, sales }));
-
-      setData(aggregatedData);
-    });
   }, []);
 
   return (
