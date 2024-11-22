@@ -12,7 +12,7 @@
 4. Open browser: `http://localhost:3000`
 
 ### Back-end
-
+Refer to README.md in the backend folder
 
 ## Hosting Information
 
